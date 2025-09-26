@@ -4,7 +4,7 @@ class Task // Убрана точка с запятой после имени к
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("the programm was made by Deinega and Piyagova");
+        Console.WriteLine( "the programm was made by Deinega and Piyagova" );
 
         Console.WriteLine("Tell me your name:");
         string fname = Console.ReadLine();
