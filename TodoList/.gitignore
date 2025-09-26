@@ -420,4 +420,4 @@ FodyWeavers.xsd
 #добавление папок по заданию
 bin/
 obj/
-.vs/
+*.vs
