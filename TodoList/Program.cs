@@ -1,16 +1,16 @@
 ﻿using System;
 
-class Task // Убрана точка с запятой после имени класса
+class TodoList
 {
     static void Main(string[] args)
     {
         Console.WriteLine( "the programm was made by Deinega and Piyagova" );
 
         Console.WriteLine("Tell me your name:");
-        string fname = Console.ReadLine();
+        string first_name = Console.ReadLine();
 
         Console.WriteLine("Tell me your surname:");
-        string sname = Console.ReadLine();
+        string surname = Console.ReadLine();
 
         Console.WriteLine("Tell me your year of birth:");
 
@@ -20,6 +20,6 @@ class Task // Убрана точка с запятой после имени к
         int age = currentDate.Year - birthYear;
 
         
-        Console.WriteLine($"New user Added: {fname} {sname}, Age: {age}");
+        Console.WriteLine($"New user Added: {first_name} {surname}, Age: {age}");
     }
 }

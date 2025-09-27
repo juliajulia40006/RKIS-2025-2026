@@ -1,0 +1,15 @@
+D:\practicespace\Новая папка\RKIS-2025-2026\TodoList\obj\Debug\net8.0\TodoList.GeneratedMSBuildEditorConfig.editorconfig
+D:\practicespace\Новая папка\RKIS-2025-2026\TodoList\obj\Debug\net8.0\TodoList.AssemblyInfoInputs.cache
+D:\practicespace\Новая папка\RKIS-2025-2026\TodoList\obj\Debug\net8.0\TodoList.AssemblyInfo.cs
+D:\practicespace\Новая папка\RKIS-2025-2026\TodoList\obj\Debug\net8.0\TodoList.csproj.CoreCompileInputs.cache
+D:\practicespace\Новая папка\RKIS-2025-2026\TodoList\obj\Debug\net8.0\TodoList.sourcelink.json
+D:\practicespace\Новая папка\RKIS-2025-2026\TodoList\bin\Debug\net8.0\TodoList.exe
+D:\practicespace\Новая папка\RKIS-2025-2026\TodoList\bin\Debug\net8.0\TodoList.deps.json
+D:\practicespace\Новая папка\RKIS-2025-2026\TodoList\bin\Debug\net8.0\TodoList.runtimeconfig.json
+D:\practicespace\Новая папка\RKIS-2025-2026\TodoList\bin\Debug\net8.0\TodoList.dll
+D:\practicespace\Новая папка\RKIS-2025-2026\TodoList\bin\Debug\net8.0\TodoList.pdb
+D:\practicespace\Новая папка\RKIS-2025-2026\TodoList\obj\Debug\net8.0\TodoList.dll
+D:\practicespace\Новая папка\RKIS-2025-2026\TodoList\obj\Debug\net8.0\refint\TodoList.dll
+D:\practicespace\Новая папка\RKIS-2025-2026\TodoList\obj\Debug\net8.0\TodoList.pdb
+D:\practicespace\Новая папка\RKIS-2025-2026\TodoList\obj\Debug\net8.0\TodoList.genruntimeconfig.cache
+D:\practicespace\Новая папка\RKIS-2025-2026\TodoList\obj\Debug\net8.0\ref\TodoList.dll
