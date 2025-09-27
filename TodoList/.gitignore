@@ -417,7 +417,7 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-bin/
-obj/
+/bin/
+/obj/
 *.vs
 *.sln
