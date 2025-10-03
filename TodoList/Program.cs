@@ -78,7 +78,28 @@ class TodoList
                         break;
                     }
 
-                    
+                    // Проверяем, хватит ли места в массиве для новой задачи
+                    if (taskCount >= todos.Length)
+                    {
+                        // Создаем новый массив в 2 раза длиннее текущего
+                        string[] newTodos = new string[todos.Length * 2];
+
+                        // Через цикл перезаписываем в него содержимое текущего массива
+                        for (int i = 0; i < todos.Length; i++)
+                        {
+                            newTodos[i] = todos[i];
+                        }
+
+                        // Записываем в переменную todos новый массив
+                        todos = newTodos;
+                        Console.WriteLine($"Массив расширен до {todos.Length} элементов");
+                    }
+
+                    // Добавляем задачу
+                    todos[taskCount] = task;
+                    taskCount++;
+                    Console.WriteLine($" Добавлено: {task}");
+                    break;
 
                 case "view":
                     if (taskCount == 0)
