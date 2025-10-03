@@ -26,6 +26,20 @@ class TodoList
 
         Console.WriteLine("Добро пожаловать в todoList.");
 
-       
+        // Бесконечный цикл для обработки команд
+        while (true)
+        {
+            Console.Write("\nВведите команду (help - список команд): ");
+            string input = Console.ReadLine()?.Trim() ?? "";
+
+            if (string.IsNullOrEmpty(input))
+                continue;
+
+            string[] parts = input.Split(' ', 2);
+            string command = parts[0].ToLower();
+            string argument = parts.Length > 1 ? parts[1] : "";
+
+            
+        }
     }
 }
