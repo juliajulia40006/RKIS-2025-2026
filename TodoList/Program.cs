@@ -24,6 +24,10 @@ class TodoList
         string[] todos = new string[2];
         int taskCount = 0;
 
+        bool[] statuses = new bool[2]; 
+
+        DateTime[] dates = new DateTime[2];
+
         Console.WriteLine("Добро пожаловать в todoList.");
 
         // Бесконечный цикл для обработки команд
@@ -97,6 +101,8 @@ class TodoList
 
                     // Добавляем задачу
                     todos[taskCount] = task;
+                    dates[taskCount] = DateTime.Now;
+                     
                     taskCount++;
                     Console.WriteLine($" Добавлено: {task}");
                     break;
@@ -111,7 +117,7 @@ class TodoList
                         Console.WriteLine("\nВаши задачи:");
                         for (int i = 0; i < taskCount; i++)
                         {
-                            Console.WriteLine($"{i + 1}. {todos[i]}");
+                            Console.WriteLine($"{i + 1}. {todos[i]} {dates[i]}");
                         }
                     }
                     break;
