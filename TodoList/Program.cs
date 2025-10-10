@@ -53,6 +53,7 @@ class TodoList
                     Console.WriteLine("view    - показать задачи.");
                     Console.WriteLine("done <idx> - пометить задачу как выполненную.");
                     Console.WriteLine("delete    - удаляет задачу.");
+                    Console.WriteLine("update \"idx\" new_text - обновляет текст задачи.");
                     Console.WriteLine("exit    - выход.");
                     break;
 
@@ -166,6 +167,31 @@ class TodoList
                     else
                     {
                         Console.WriteLine("Неверный номер задачи!");
+                    }
+                    break;
+
+                case "update":
+                    string[] updateParts = argument.Split(new char[] { '"' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (updateParts.Length >= 2 && int.TryParse(updateParts[0].Trim(), out int updateIndex) && updateIndex >= 1 && updateIndex <= taskCount)
+                    {
+                        int index = updateIndex - 1;
+                        string oldTask = todos[index];
+                        string newTask = updateParts[1].Trim();
+
+                        // Проверяем, что новый текст не пустой
+                        if (string.IsNullOrEmpty(newTask))
+                        {
+                            Console.WriteLine("Ошибка: Новый текст задачи не может быть пустым");
+                            break;
+                        }
+
+                        todos[index] = newTask;
+                        dates[index] = DateTime.Now;
+                        Console.WriteLine($"Задача обновлена: '{oldTask}' -> '{newTask}'");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка: Используйте: update \"номер\" новый текст");
                     }
                     break;
 
