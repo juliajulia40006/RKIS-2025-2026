@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.FileIO;
+using System;
 
 class TodoList
 {
@@ -50,7 +51,8 @@ class TodoList
                     Console.WriteLine("profile - данные пользователя.");
                     Console.WriteLine("add     - добавить задачу (add \"текст\").");
                     Console.WriteLine("view    - показать задачи.");
-                    Console.WriteLine("done    - пометить задачу как выполненную.");
+                    Console.WriteLine("done <idx> - пометить задачу как выполненную.");
+                    Console.WriteLine("delete    - удаляет задачу.");
                     Console.WriteLine("exit    - выход.");
                     break;
 
@@ -138,6 +140,28 @@ class TodoList
                         statuses[index] = true;
                         dates[index] = DateTime.Now;
                         Console.WriteLine($"Задача '{todos[index]}' отмечена как выполненная!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Неверный номер задачи!");
+                    }
+                    break;
+
+                case "delete":
+                    if (int.TryParse(argument, out int deleteIndex) && deleteIndex >= 1 && deleteIndex <= taskCount)
+                    {
+                        int index = deleteIndex - 1;
+                        string deletedTask = todos[index];
+
+                        for (int i = index; i < taskCount - 1; i++)
+                        {
+                            todos[i] = todos[i + 1];
+                            dates[i] = dates[i + 1];
+                            statuses[i] = statuses[i + 1];
+                        }
+
+                        taskCount--;
+                        Console.WriteLine($"Задача '{deletedTask}' удалена.");
                     }
                     else
                     {
