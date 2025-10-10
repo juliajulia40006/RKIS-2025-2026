@@ -53,7 +53,7 @@ class TodoList
                     Console.WriteLine("view    - показать задачи.");
                     Console.WriteLine("done <idx> - пометить задачу как выполненную.");
                     Console.WriteLine("delete    - удаляет задачу.");
-                    Console.WriteLine("update <idx> 'new_text' - обновляет текст задачи.");
+                    Console.WriteLine("update \"idx\" new_text - обновляет текст задачи.");
                     Console.WriteLine("exit    - выход.");
                     break;
 
