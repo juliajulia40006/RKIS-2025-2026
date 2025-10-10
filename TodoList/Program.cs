@@ -46,11 +46,12 @@ class TodoList
             switch (command)
             {
                 case "help":
-                    Console.WriteLine("\nhelp    - список команд");
-                    Console.WriteLine("profile - данные пользователя");
-                    Console.WriteLine("add     - добавить задачу (add \"текст\")");
-                    Console.WriteLine("view    - показать задачи");
-                    Console.WriteLine("exit    - выход");
+                    Console.WriteLine("\nhelp    - список команд.");
+                    Console.WriteLine("profile - данные пользователя.");
+                    Console.WriteLine("add     - добавить задачу (add \"текст\").");
+                    Console.WriteLine("view    - показать задачи.");
+                    Console.WriteLine("done    - пометить задачу как выполненную.");
+                    Console.WriteLine("exit    - выход.");
                     break;
 
                 case "profile":
@@ -124,8 +125,23 @@ class TodoList
                         Console.WriteLine("\nВаши задачи:");
                         for (int i = 0; i < taskCount; i++)
                         {
-                            Console.WriteLine($"{i + 1}. {todos[i]} {dates[i]} ");
+                            string status = statuses[i] ? "выполнено" : "не выполнено";
+                            Console.WriteLine($"{i + 1}. {todos[i]} {dates[i]} {status} ");
                         }
+                    }
+                    break;
+
+                case "done":
+                    if (int.TryParse(argument, out int taskIndex) && taskIndex >= 1 && taskIndex <= taskCount)
+                    {
+                        int index = taskIndex - 1;
+                        statuses[index] = true;
+                        dates[index] = DateTime.Now;
+                        Console.WriteLine($"Задача '{todos[index]}' отмечена как выполненная!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Неверный номер задачи!");
                     }
                     break;
 
