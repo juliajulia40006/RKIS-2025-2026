@@ -25,7 +25,7 @@ class TodoList
         int taskCount = 0;
 
         bool[] statuses = new bool[2]; 
-
+        
         DateTime[] dates = new DateTime[2];
 
         Console.WriteLine("Добро пожаловать в todoList.");
@@ -87,22 +87,29 @@ class TodoList
                     {
                         // Создаем новый массив в 2 раза длиннее текущего
                         string[] newTodos = new string[todos.Length * 2];
+                        DateTime[] newDates = new DateTime[dates.Length * 2];
+                        bool[] newStatuses = new bool[dates.Length * 2];
 
                         // Через цикл перезаписываем в него содержимое текущего массива
                         for (int i = 0; i < todos.Length; i++)
                         {
                             newTodos[i] = todos[i];
+                            newDates[i] = DateTime.Now;
                         }
 
                         // Записываем в переменную todos новый массив
                         todos = newTodos;
+                        dates = newDates;
+                        statuses = newStatuses;
                         Console.WriteLine($"Массив расширен до {todos.Length} элементов");
+
+                       
                     }
 
                     // Добавляем задачу
                     todos[taskCount] = task;
                     dates[taskCount] = DateTime.Now;
-                     
+                    statuses[taskCount] = false;
                     taskCount++;
                     Console.WriteLine($" Добавлено: {task}");
                     break;
@@ -117,7 +124,7 @@ class TodoList
                         Console.WriteLine("\nВаши задачи:");
                         for (int i = 0; i < taskCount; i++)
                         {
-                            Console.WriteLine($"{i + 1}. {todos[i]} {dates[i]}");
+                            Console.WriteLine($"{i + 1}. {todos[i]} {dates[i]} ");
                         }
                     }
                     break;
@@ -129,6 +136,8 @@ class TodoList
                 default:
                     Console.WriteLine("Неизвестная команда. Введите 'help' для справки.");
                     break;
+
+                
             }
         }
     }
