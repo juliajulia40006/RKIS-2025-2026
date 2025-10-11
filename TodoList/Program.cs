@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic.FileIO;
-using System;
+﻿using System;
 
 class TodoList
 {
@@ -51,15 +50,14 @@ class TodoList
                     Console.WriteLine("profile - данные пользователя.");
                     Console.WriteLine("add     - добавить задачу (add \"текст\").");
                     Console.WriteLine("view    - показать задачи.");
-                    Console.WriteLine("done <idx> - пометить задачу как выполненную.");
+                    Console.WriteLine("done <idx> - пометить задачу как выполненную.");     
                     Console.WriteLine("delete    - удаляет задачу.");
                     Console.WriteLine("update <idx> 'new_text' - обновляет текст задачи.");
                     Console.WriteLine("exit    - выход.");
                     break;
 
                 case "profile":
-                    int currentAge = DateTime.Now.Year - birthYear;
-                    Console.WriteLine($"\n{first_name} {surname}, {birthYear} год рождения ({currentAge} лет)");
+                    Console.WriteLine($"\n{first_name} {surname}, {birthYear} год рождения ({age} лет)");
                     break;
 
                 case "add":
