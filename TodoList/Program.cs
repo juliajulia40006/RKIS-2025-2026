@@ -112,15 +112,14 @@ class TodoList
 
         if (argument == "--multiline" || argument == "-m")
         {
-            // Многострочный режим
+
             Console.WriteLine("Многострочный режим. Вводите задачи (для завершения введите !end):");
             string multilineTask = "";
             string line;
-            int lineNumber = 1;
 
             while (true)
             {
-                Console.Write($"{lineNumber}> ");
+                Console.Write("> ");
                 line = Console.ReadLine();
 
                 if (line == "!end")
@@ -133,7 +132,6 @@ class TodoList
                     multilineTask += "\n";
                 }
                 multilineTask += line;
-                lineNumber++;
             }
 
             if (string.IsNullOrEmpty(multilineTask))
@@ -152,11 +150,10 @@ class TodoList
             dates[taskCount] = DateTime.Now;
             statuses[taskCount] = false;
             taskCount++;
-            Console.WriteLine($" Добавлено многострочная задача (номер: {taskCount}, статус: не выполнено, время: {DateTime.Now})");
+            Console.WriteLine($" Добавлено многострочная задача");
         }
         else
         {
-
             string[] taskParts = argument.Split(new char[] { '"' }, StringSplitOptions.RemoveEmptyEntries);
 
             if (taskParts.Length == 0)
@@ -185,7 +182,8 @@ class TodoList
             taskCount++;
             Console.WriteLine($" Добавлено: {task}");
         }
-    
+    }
+
     static void View()
     {
         if (taskCount == 0)
