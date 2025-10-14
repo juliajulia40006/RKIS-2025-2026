@@ -89,7 +89,7 @@ class TodoList
     {
         Console.WriteLine("\nhelp    - список команд.");
         Console.WriteLine("profile - данные пользователя.");
-        Console.WriteLine("add     - добавить задачу (add \"текст\").");
+        Console.WriteLine("add     - добавить задачу (add \"текст\"). | add -m - добавить задачу в режиме мультилайна");
         Console.WriteLine("view    - показать задачи.");
         Console.WriteLine("done <idx> - пометить задачу как выполненную.");
         Console.WriteLine("delete    - удаляет задачу.");
@@ -110,35 +110,82 @@ class TodoList
             return;
         }
 
-        string[] taskParts = argument.Split(new char[] { '"' }, StringSplitOptions.RemoveEmptyEntries);
-
-        if (taskParts.Length == 0)
+        if (argument == "--multiline" || argument == "-m")
         {
-            Console.WriteLine("Ошибка: Текст задачи не может быть пустым");
-            return;
+            // Многострочный режим
+            Console.WriteLine("Многострочный режим. Вводите задачи (для завершения введите !end):");
+            string multilineTask = "";
+            string line;
+            int lineNumber = 1;
+
+            while (true)
+            {
+                Console.Write($"{lineNumber}> ");
+                line = Console.ReadLine();
+
+                if (line == "!end")
+                {
+                    break;
+                }
+
+                if (!string.IsNullOrEmpty(multilineTask))
+                {
+                    multilineTask += "\n";
+                }
+                multilineTask += line;
+                lineNumber++;
+            }
+
+            if (string.IsNullOrEmpty(multilineTask))
+            {
+                Console.WriteLine("Ошибка: Текст задачи не может быть пустым");
+                return;
+            }
+
+            if (taskCount >= todos.Length)
+            {
+                ExpandArrays();
+                Console.WriteLine($"Массив расширен до {todos.Length} элементов");
+            }
+
+            todos[taskCount] = multilineTask;
+            dates[taskCount] = DateTime.Now;
+            statuses[taskCount] = false;
+            taskCount++;
+            Console.WriteLine($" Добавлено многострочная задача (номер: {taskCount}, статус: не выполнено, время: {DateTime.Now})");
         }
-
-        string task = taskParts[0].Trim();
-
-        if (string.IsNullOrEmpty(task))
+        else
         {
-            Console.WriteLine("Ошибка: Текст задачи не может быть пустым");
-            return;
+
+            string[] taskParts = argument.Split(new char[] { '"' }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (taskParts.Length == 0)
+            {
+                Console.WriteLine("Ошибка: Текст задачи не может быть пустым");
+                return;
+            }
+
+            string task = taskParts[0].Trim();
+
+            if (string.IsNullOrEmpty(task))
+            {
+                Console.WriteLine("Ошибка: Текст задачи не может быть пустым");
+                return;
+            }
+
+            if (taskCount >= todos.Length)
+            {
+                ExpandArrays();
+                Console.WriteLine($"Массив расширен до {todos.Length} элементов");
+            }
+
+            todos[taskCount] = task;
+            dates[taskCount] = DateTime.Now;
+            statuses[taskCount] = false;
+            taskCount++;
+            Console.WriteLine($" Добавлено: {task}");
         }
-
-        if (taskCount >= todos.Length)
-        {
-            ExpandArrays();
-            Console.WriteLine($"Массив расширен до {todos.Length} элементов");
-        }
-
-        todos[taskCount] = task;
-        dates[taskCount] = DateTime.Now;
-        statuses[taskCount] = false;
-        taskCount++;
-        Console.WriteLine($" Добавлено: {task}");
-    }
-
+    
     static void View()
     {
         if (taskCount == 0)
