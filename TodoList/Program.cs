@@ -59,7 +59,7 @@ class TodoList
                     break;
 
                 case "view":
-                    View();
+                    View(argument);
                     break;
 
                 case "done":
@@ -90,7 +90,7 @@ class TodoList
         Console.WriteLine("\nhelp    - список команд.");
         Console.WriteLine("profile - данные пользователя.");
         Console.WriteLine("add     - добавить задачу (add \"текст\"). | add -m - добавить задачу в режиме мультилайна");
-        Console.WriteLine("view    - показать задачи.");
+        Console.WriteLine("view - показать задачи | view -a - показать задачи в виде таблицы.");
         Console.WriteLine("done <idx> - пометить задачу как выполненную.");
         Console.WriteLine("delete    - удаляет задачу.");
         Console.WriteLine("update \"idx\" new_text - обновляет текст задачи.");
@@ -184,20 +184,115 @@ class TodoList
         }
     }
 
-    static void View()
+    static void View(string argument)
     {
         if (taskCount == 0)
         {
             Console.WriteLine("\nЗадач нет");
         }
-        else
+
+        bool showIndex = false;
+        bool showStatus = false;
+        bool showDate = false;
+        bool showAll = false;
+        bool simpleView = string.IsNullOrEmpty(argument);
+
+        if (!string.IsNullOrEmpty(argument))
+        {
+            string[] flags = argument.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            foreach (string flag in flags)
+            {
+                string cleanFlag = flag.Trim().ToLower();
+                switch (cleanFlag)
+                {
+                    case "--index":
+                    case "-i":
+                        showIndex = true;
+                        break;
+                    case "--status":
+                    case "-s":
+                        showStatus = true;
+                        break;
+                    case "--update-date":
+                    case "-d":
+                        showDate = true;
+                        break;
+                    case "--all":
+                    case "-a":
+                        showAll = true;
+                        break;
+                }
+            }
+        }
+
+        if (showAll)
+        {
+            showIndex = true;
+            showStatus = true;
+            showDate = true;
+        }
+
+        if (simpleView)
         {
             Console.WriteLine("\nВаши задачи:");
             for (int i = 0; i < taskCount; i++)
             {
                 string status = statuses[i] ? "выполнено" : "не выполнено";
+                string shortTask = todos[i].Length > 30 ? todos[i].Substring(0, 27) + "..." : todos[i];
                 Console.WriteLine($"{i + 1}. {todos[i]} {dates[i]} {status} ");
             }
+            return;
+        }
+        if (!showIndex && !showStatus && !showDate)
+        {
+            Console.WriteLine("\nВаши задачи:");
+            for (int i = 0; i < taskCount; i++)
+            {
+                string shortTask = todos[i].Length > 30 ? todos[i].Substring(0, 27) + "..." : todos[i];
+                Console.WriteLine($"{shortTask}");
+            }
+            return;
+        }
+
+        Console.WriteLine("\nВаши задачи:");
+
+        int indexWidth = 6;
+        int taskWidth = 30;
+        int statusWidth = 12;
+        int dateWidth = 19;
+
+        string header = "";
+        if (showIndex) header += "Индекс".PadRight(indexWidth) + " ";
+        header += "Задача".PadRight(taskWidth) + " ";
+        if (showStatus) header += "Статус".PadRight(statusWidth) + " ";
+        if (showDate) header += "Дата изменения".PadRight(dateWidth);
+        Console.WriteLine(header);
+        Console.WriteLine(new string('-', header.Length));
+
+        for (int i = 0; i < taskCount; i++)
+        {
+            string line = "";
+
+            if (showIndex)
+            {
+                line += (i + 1).ToString().PadRight(indexWidth) + " ";
+            }
+
+            string shortTask = todos[i].Length > 30 ? todos[i].Substring(0, 27) + "..." : todos[i];
+            line += shortTask.PadRight(taskWidth) + " ";
+
+            if (showStatus)
+            {
+                string status = statuses[i] ? "выполнено" : "не выполнено";
+                line += status.PadRight(statusWidth) + " ";
+            }
+
+            if (showDate)
+            {
+                line += dates[i].ToString("dd.MM.yyyy HH:mm").PadRight(dateWidth);
+            }
+
+            Console.WriteLine(line.TrimEnd());
         }
     }
 
