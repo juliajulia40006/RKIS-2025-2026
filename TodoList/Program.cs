@@ -128,19 +128,7 @@ class TodoList
 
         if (taskCount >= todos.Length)
         {
-            string[] newTodos = new string[todos.Length * 2];
-            DateTime[] newDates = new DateTime[dates.Length * 2];
-            bool[] newStatuses = new bool[dates.Length * 2];
-
-            for (int i = 0; i < todos.Length; i++)
-            {
-                newTodos[i] = todos[i];
-                newDates[i] = DateTime.Now;
-            }
-
-            todos = newTodos;
-            dates = newDates;
-            statuses = newStatuses;
+            ExpandArrays();
             Console.WriteLine($"Массив расширен до {todos.Length} элементов");
         }
 
@@ -229,5 +217,23 @@ class TodoList
         {
             Console.WriteLine("Ошибка: Используйте: update \"номер\" новый текст");
         }
+    }
+
+    static void ExpandArrays()
+    {
+        string[] newTodos = new string[todos.Length * 2];
+        DateTime[] newDates = new DateTime[dates.Length * 2];
+        bool[] newStatuses = new bool[dates.Length * 2];
+
+        for (int i = 0; i < todos.Length; i++)
+        {
+            newTodos[i] = todos[i];
+            newDates[i] = DateTime.Now;
+            newStatuses[i] = statuses[i];
+        }
+
+        todos = newTodos;
+        dates = newDates;
+        statuses = newStatuses;
     }
 }
