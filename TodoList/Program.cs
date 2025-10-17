@@ -78,6 +78,10 @@ class TodoList
                     Console.WriteLine("Выход...");
                     return;
 
+                case "read":
+                    Read(argument, todos, taskCount, statuses, dates);
+                    break;
+
                 default:
                     Console.WriteLine("Неизвестная команда. Введите 'help' для справки.");
                     break;
@@ -94,6 +98,7 @@ class TodoList
         Console.WriteLine("done <idx> - пометить задачу как выполненную.");
         Console.WriteLine("delete    - удаляет задачу.");
         Console.WriteLine("update \"idx\" new_text - обновляет текст задачи.");
+        Console.WriteLine("read <idx> - прочитать полный текст задачи " );
         Console.WriteLine("exit    - выход.");
     }
 
@@ -375,5 +380,22 @@ class TodoList
         todos = newTodos;
         dates = newDates;
         statuses = newStatuses;
+    }
+
+    static void Read(string argument, string[] todos, int taskCount, bool[] statuses, DateTime[] dates)
+    {
+        if (int.TryParse(argument, out int taskIndex) && taskIndex >= 1 && taskIndex <= taskCount)
+        {
+            int index = taskIndex - 1;
+            string status = statuses[index] ? "выполнено" : "не выполнено";
+            Console.WriteLine($"\nЗадача #{taskIndex}:");
+            Console.WriteLine($"Текст: {todos[index]}");
+            Console.WriteLine($"Статус: {status}");
+            Console.WriteLine($"Дата изменения: {dates[index]}");
+        }
+        else
+        {
+            Console.WriteLine("Неверный номер задачи!");
+        }
     }
 }
