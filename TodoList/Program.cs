@@ -102,8 +102,11 @@ class TodoList
         Console.WriteLine("read <idx> - прочитать полный текст задачи " );
         Console.WriteLine("exit    - выход.");
         Console.WriteLine("---------------------------------------------------------");
-        Console.WriteLine("Индексы:");
-        Console.WriteLine("");
+        Console.WriteLine("Индексы для команды view:");
+        Console.WriteLine("--index / -i - индекс задачи.");
+        Console.WriteLine("--statuses / -s - статусы.");
+        Console.WriteLine("--update-date / -d - время, дата.");
+        Console.WriteLine("--all / -a - показать всё.");
     }
 
     static void Profile()
