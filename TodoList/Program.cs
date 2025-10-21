@@ -2,7 +2,7 @@
 
 class TodoList
 {
-    static string first_name;
+    static string firstName;
     static string surname;
     static int birthYear;
     static int age;
@@ -17,7 +17,7 @@ class TodoList
         Console.WriteLine("The program was made by Deinega and Piyagova");
 
         Console.WriteLine("Tell me your name:");
-        first_name = Console.ReadLine();
+        firstName = Console.ReadLine();
 
         Console.WriteLine("Tell me your surname:");
         surname = Console.ReadLine();
@@ -28,7 +28,7 @@ class TodoList
         DateTime currentDate = DateTime.Today;
         age = currentDate.Year - birthYear;
 
-        Console.WriteLine($"New user Added: {first_name} {surname}, Age: {age}");
+        Console.WriteLine($"New user Added: {firstName} {surname}, Age: {age}");
 
         Console.WriteLine("Добро пожаловать в todoList.");
 
@@ -91,20 +91,24 @@ class TodoList
 
     static void Help()
     {
+        Console.WriteLine("---------------------------------------------------------");
         Console.WriteLine("\nhelp    - список команд.");
         Console.WriteLine("profile - данные пользователя.");
-        Console.WriteLine("add     - добавить задачу (add \"текст\"). | add -m - добавить задачу в режиме мультилайна");
-        Console.WriteLine("view - показать задачи | view -a - показать задачи в виде таблицы.");
+        Console.WriteLine("add     - добавить задачу (add \"текст\").");
+        Console.WriteLine("view - показать задачи.");
         Console.WriteLine("done <idx> - пометить задачу как выполненную.");
-        Console.WriteLine("delete    - удаляет задачу.");
+        Console.WriteLine("delete  - удаляет задачу.");
         Console.WriteLine("update \"idx\" new_text - обновляет текст задачи.");
         Console.WriteLine("read <idx> - прочитать полный текст задачи " );
         Console.WriteLine("exit    - выход.");
+        Console.WriteLine("---------------------------------------------------------");
+        Console.WriteLine("Индексы:");
+        Console.WriteLine("");
     }
 
     static void Profile()
     {
-        Console.WriteLine($"\n{first_name} {surname}, {birthYear} год рождения ({age} лет)");
+        Console.WriteLine($"\n{firstName} {surname}, {birthYear} год рождения ({age} лет)");
     }
 
     static void Add(string argument)
@@ -194,13 +198,13 @@ class TodoList
         if (taskCount == 0)
         {
             Console.WriteLine("\nЗадач нет");
+            return;
         }
 
         bool showIndex = false;
         bool showStatus = false;
         bool showDate = false;
         bool showAll = false;
-        bool simpleView = string.IsNullOrEmpty(argument);
 
         if (!string.IsNullOrEmpty(argument))
         {
@@ -208,24 +212,49 @@ class TodoList
             foreach (string flag in flags)
             {
                 string cleanFlag = flag.Trim().ToLower();
-                switch (cleanFlag)
+
+                if (cleanFlag.StartsWith("-") && cleanFlag.Length > 2 && !cleanFlag.StartsWith("--"))
                 {
-                    case "--index":
-                    case "-i":
-                        showIndex = true;
-                        break;
-                    case "--status":
-                    case "-s":
-                        showStatus = true;
-                        break;
-                    case "--update-date":
-                    case "-d":
-                        showDate = true;
-                        break;
-                    case "--all":
-                    case "-a":
-                        showAll = true;
-                        break;
+                    foreach (char c in cleanFlag.Substring(1))
+                    {
+                        switch (c)
+                        {
+                            case 'i':
+                                showIndex = true;
+                                break;
+                            case 's':
+                                showStatus = true;
+                                break;
+                            case 'd':
+                                showDate = true;
+                                break;
+                            case 'a':
+                                showAll = true;
+                                break;
+                        }
+                    }
+                }
+                else
+                {
+                    switch (cleanFlag)
+                    {
+                        case "--index":
+                        case "-i":
+                            showIndex = true;
+                            break;
+                        case "--status":
+                        case "-s":
+                            showStatus = true;
+                            break;
+                        case "--update-date":
+                        case "-d":
+                            showDate = true;
+                            break;
+                        case "--all":
+                        case "-a":
+                            showAll = true;
+                            break;
+                    }
                 }
             }
         }
@@ -237,23 +266,13 @@ class TodoList
             showDate = true;
         }
 
-        if (simpleView)
-        {
-            Console.WriteLine("\nВаши задачи:");
-            for (int i = 0; i < taskCount; i++)
-            {
-                string status = statuses[i] ? "выполнено" : "не выполнено";
-                string shortTask = todos[i].Length > 30 ? todos[i].Substring(0, 27) + "..." : todos[i];
-                Console.WriteLine($"{i + 1}. {todos[i]} {dates[i]} {status} ");
-            }
-            return;
-        }
         if (!showIndex && !showStatus && !showDate)
         {
             Console.WriteLine("\nВаши задачи:");
             for (int i = 0; i < taskCount; i++)
             {
-                string shortTask = todos[i].Length > 30 ? todos[i].Substring(0, 27) + "..." : todos[i];
+                string taskText = GetFirstLine(todos[i]);
+                string shortTask = taskText.Length > 30 ? taskText.Substring(0, 27) + "..." : taskText;
                 Console.WriteLine($"{shortTask}");
             }
             return;
@@ -283,7 +302,8 @@ class TodoList
                 line += (i + 1).ToString().PadRight(indexWidth) + " ";
             }
 
-            string shortTask = todos[i].Length > 30 ? todos[i].Substring(0, 27) + "..." : todos[i];
+            string taskText = GetFirstLine(todos[i]);
+            string shortTask = taskText.Length > 30 ? taskText.Substring(0, 27) + "..." : taskText;
             line += shortTask.PadRight(taskWidth) + " ";
 
             if (showStatus)
@@ -300,6 +320,21 @@ class TodoList
             Console.WriteLine(line.TrimEnd());
         }
     }
+
+    static string GetFirstLine(string task)
+    {
+        if (string.IsNullOrEmpty(task))
+            return task;
+
+        int newLineIndex = task.IndexOf('\n');
+        if (newLineIndex >= 0)
+        {
+            return task.Substring(0, newLineIndex) + "...";
+        }
+
+        return task;
+    }
+
 
     static void Done(string argument)
     {
@@ -389,7 +424,7 @@ class TodoList
             int index = taskIndex - 1;
             string status = statuses[index] ? "выполнено" : "не выполнено";
             Console.WriteLine($"\nЗадача #{taskIndex}:");
-            Console.WriteLine($"Текст: {todos[index]}");
+            Console.WriteLine($"Текст: \n{todos[index]}");
             Console.WriteLine($"Статус: {status}");
             Console.WriteLine($"Дата изменения: {dates[index]}");
         }
