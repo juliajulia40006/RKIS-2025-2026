@@ -307,34 +307,15 @@ class Program
         }
     }
 
-    static void ExpandArrays()
+
+    static void Read(string argument)
     {
-        string[] newTodos = new string[todos.Length * 2];
-        DateTime[] newDates = new DateTime[dates.Length * 2];
-        bool[] newStatuses = new bool[dates.Length * 2];
-
-        for (int i = 0; i < todos.Length; i++)
-        {
-            newTodos[i] = todos[i];
-            newDates[i] = DateTime.Now;
-            newStatuses[i] = statuses[i];
-        }
-
-        todos = newTodos;
-        dates = newDates;
-        statuses = newStatuses;
-    }
-
-    static void Read(string argument, string[] todos, int taskCount, bool[] statuses, DateTime[] dates)
-    {
-        if (int.TryParse(argument, out int taskIndex) && taskIndex >= 1 && taskIndex <= taskCount)
+        if (int.TryParse(argument, out int taskIndex) && taskIndex >= 1 && taskIndex <= todoList.Count)
         {
             int index = taskIndex - 1;
-            string status = statuses[index] ? "выполнено" : "не выполнено";
-            Console.WriteLine($"\nЗадача #{taskIndex}:");
-            Console.WriteLine($"Текст: \n{todos[index]}");
-            Console.WriteLine($"Статус: {status}");
-            Console.WriteLine($"Дата изменения: {dates[index]}");
+            TodoItem item = todoList.GetItem(index);
+            Console.WriteLine($"Задача #{taskIndex}:");
+            Console.WriteLine(item.GetFullInfo());
         }
         else
         {
