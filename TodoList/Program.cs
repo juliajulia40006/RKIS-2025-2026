@@ -282,13 +282,14 @@ class Program
         }
     }
 
-    static void Update(string argument)
+   static void Update(string argument)
     {
         string[] updateParts = argument.Split(new char[] { '"' }, StringSplitOptions.RemoveEmptyEntries);
-        if (updateParts.Length >= 2 && int.TryParse(updateParts[0].Trim(), out int updateIndex) && updateIndex >= 1 && updateIndex <= taskCount)
+        if (updateParts.Length >= 2 && int.TryParse(updateParts[0].Trim(), out int updateIndex) && updateIndex >= 1 && updateIndex <= todoList.Count)
         {
             int index = updateIndex - 1;
-            string oldTask = todos[index];
+            TodoItem item = todoList.GetItem(index);
+            string oldTask = item.Text;
             string newTask = updateParts[1].Trim();
 
             if (string.IsNullOrEmpty(newTask))
@@ -297,8 +298,7 @@ class Program
                 return;
             }
 
-            todos[index] = newTask;
-            dates[index] = DateTime.Now;
+            item.UpdateText(newTask);
             Console.WriteLine($"Задача обновлена: '{oldTask}' -> '{newTask}'");
         }
         else
