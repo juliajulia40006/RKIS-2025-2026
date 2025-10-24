@@ -205,18 +205,10 @@ class Program
                     {
                         switch (c)
                         {
-                            case 'i':
-                                showIndex = true;
-                                break;
-                            case 's':
-                                showStatus = true;
-                                break;
-                            case 'd':
-                                showDate = true;
-                                break;
-                            case 'a':
-                                showAll = true;
-                                break;
+                            case 'i':showIndex = true; break;
+                            case 's':showStatus = true; break;
+                            case 'd':showDate = true; break;
+                            case 'a':showAll = true; break;
                         }
                     }
                 }
@@ -224,22 +216,10 @@ class Program
                 {
                     switch (cleanFlag)
                     {
-                        case "--index":
-                        case "-i":
-                            showIndex = true;
-                            break;
-                        case "--status":
-                        case "-s":
-                            showStatus = true;
-                            break;
-                        case "--update-date":
-                        case "-d":
-                            showDate = true;
-                            break;
-                        case "--all":
-                        case "-a":
-                            showAll = true;
-                            break;
+                        case "--index":case "-i":showIndex = true; break;
+                        case "--status":case "-s":showStatus = true; break;
+                        case "--update-date":case "-d":showDate = true; break;
+                        case "--all":case "-a":showAll = true; break;
                     }
                 }
             }
@@ -252,59 +232,7 @@ class Program
             showDate = true;
         }
 
-        if (!showIndex && !showStatus && !showDate)
-        {
-            Console.WriteLine("\nВаши задачи:");
-            for (int i = 0; i < taskCount; i++)
-            {
-                string taskText = GetFirstLine(todos[i]);
-                string shortTask = taskText.Length > 30 ? taskText.Substring(0, 27) + "..." : taskText;
-                Console.WriteLine($"{shortTask}");
-            }
-            return;
-        }
-
-        Console.WriteLine("\nВаши задачи:");
-
-        int indexWidth = 6;
-        int taskWidth = 30;
-        int statusWidth = 12;
-        int dateWidth = 19;
-
-        string header = "";
-        if (showIndex) header += "Индекс".PadRight(indexWidth) + " ";
-        header += "Задача".PadRight(taskWidth) + " ";
-        if (showStatus) header += "Статус".PadRight(statusWidth) + " ";
-        if (showDate) header += "Дата изменения".PadRight(dateWidth);
-        Console.WriteLine(header);
-        Console.WriteLine(new string('-', header.Length));
-
-        for (int i = 0; i < taskCount; i++)
-        {
-            string line = "";
-
-            if (showIndex)
-            {
-                line += (i + 1).ToString().PadRight(indexWidth) + " ";
-            }
-
-            string taskText = GetFirstLine(todos[i]);
-            string shortTask = taskText.Length > 30 ? taskText.Substring(0, 27) + "..." : taskText;
-            line += shortTask.PadRight(taskWidth) + " ";
-
-            if (showStatus)
-            {
-                string status = statuses[i] ? "выполнено" : "не выполнено";
-                line += status.PadRight(statusWidth) + " ";
-            }
-
-            if (showDate)
-            {
-                line += dates[i].ToString("dd.MM.yyyy HH:mm").PadRight(dateWidth);
-            }
-
-            Console.WriteLine(line.TrimEnd());
-        }
+        todoList.View(showIndex, showStatus, showDate);
     }
 
     static string GetFirstLine(string task)
