@@ -1,6 +1,6 @@
 ﻿using System;
 
-class TodoList
+class Program
 {
     static string firstName;
     static string surname;
