@@ -52,8 +52,6 @@
             return;
         }
 
-        Console.WriteLine("\nВаши задачи:");
-
         int indexWidth = 6;
         int taskWidth = 30;
         int statusWidth = 12;
@@ -61,7 +59,7 @@
 
         string header = "";
         if (showIndex) header += "Индекс".PadRight(indexWidth) + " ";
-        header += "Задача".PadRight(taskWidth) + " ";
+        header += "Задачи".PadRight(taskWidth) + " ";
         if (showStatus) header += "Статус".PadRight(statusWidth) + " ";
         if (showDate) header += "Дата изменения".PadRight(dateWidth);
 

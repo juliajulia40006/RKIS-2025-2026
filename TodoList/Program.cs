@@ -72,7 +72,7 @@ class Program
                     return;
 
                 case "read":
-                    Read(argument, todos, taskCount, statuses, dates);
+                    Read(argument);
                     break;
 
                 default:
@@ -104,7 +104,7 @@ class Program
 
     static void Profile()
     {
-        Console.WriteLine($"\n{firstName} {surname}, {birthYear} год рождения ({age} лет)");
+        Console.WriteLine($"\n{userProfile.GetInfo()}");
     }
 
     static void Add(string argument)
@@ -141,19 +141,13 @@ class Program
 
             if (string.IsNullOrEmpty(multilineTask))
             {
-                Console.WriteLine("Ошибка: Текст задачи не может быть пустым");
+                Console.WriteLine("Ошибка: Текст задачи не может быть пустым.");
                 return;
-            }
-
-            if (taskCount >= todos.Length)
-            {
-                ExpandArrays();
-                Console.WriteLine($"Массив расширен до {todos.Length} элементов");
             }
 
             TodoItem item = new TodoItem(multilineTask);
             todoList.Add(item);
-            Console.WriteLine($" Добавлено многострочная задача");
+            Console.WriteLine($" Добавлена многострочная задача");
         }
         else
         {
@@ -161,7 +155,7 @@ class Program
 
             if (taskParts.Length == 0)
             {
-                Console.WriteLine("Ошибка: Текст задачи не может быть пустым");
+                Console.WriteLine("Ошибка: Текст задачи не может быть пустым.");
                 return;
             }
 
@@ -169,24 +163,18 @@ class Program
 
             if (string.IsNullOrEmpty(task))
             {
-                Console.WriteLine("Ошибка: Текст задачи не может быть пустым");
+                Console.WriteLine("Ошибка: Текст задачи не может быть пустым.");
                 return;
             }
 
             TodoItem item = new TodoItem(task);
             todoList.Add(item);
-            Console.WriteLine($" Добавлено: {task}");
+            Console.WriteLine($" Добавлено: {task}.");
         }
     }
 
     static void View(string argument)
     {
-        if (taskCount == 0)
-        {
-            Console.WriteLine("\nЗадач нет");
-            return;
-        }
-
         bool showIndex = false;
         bool showStatus = false;
         bool showDate = false;
@@ -205,10 +193,10 @@ class Program
                     {
                         switch (c)
                         {
-                            case 'i':showIndex = true; break;
-                            case 's':showStatus = true; break;
-                            case 'd':showDate = true; break;
-                            case 'a':showAll = true; break;
+                            case 'i': showIndex = true; break;
+                            case 's': showStatus = true; break;
+                            case 'd': showDate = true; break;
+                            case 'a': showAll = true; break;
                         }
                     }
                 }
@@ -216,10 +204,10 @@ class Program
                 {
                     switch (cleanFlag)
                     {
-                        case "--index":case "-i":showIndex = true; break;
-                        case "--status":case "-s":showStatus = true; break;
-                        case "--update-date":case "-d":showDate = true; break;
-                        case "--all":case "-a":showAll = true; break;
+                        case "--index": case "-i": showIndex = true; break;
+                        case "--status": case "-s": showStatus = true; break;
+                        case "--update-date": case "-d": showDate = true; break;
+                        case "--all": case "-a": showAll = true; break;
                     }
                 }
             }
