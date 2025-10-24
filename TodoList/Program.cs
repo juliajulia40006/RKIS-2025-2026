@@ -10,16 +10,16 @@ class Program
         Console.WriteLine("The program was made by Deinega and Piyagova");
 
         Console.WriteLine("Tell me your name:");
-        firstName = Console.ReadLine();
+        string firstName = Console.ReadLine();
 
         Console.WriteLine("Tell me your surname:");
-        surname = Console.ReadLine();
+        string surname = Console.ReadLine();
 
         Console.WriteLine("Tell me your year of birth:");
-        birthYear = int.Parse(Console.ReadLine());
+        int birthYear = int.Parse(Console.ReadLine());
 
         userProfile = new Profile(firstName, surname, birthYear);
-        todoList = new TodoLst();
+        todoList = new TodoList();
 
         Console.WriteLine($"New user Added: {userProfile.GetInfo()}");
 
@@ -104,7 +104,7 @@ class Program
 
     static void Profile()
     {
-        Console.WriteLine($"\n{userProfile.GetInfo()}");
+        Console.WriteLine($"\n{firstName} {surname}, {birthYear} год рождения ({age} лет)");
     }
 
     static void Add(string argument)
@@ -151,10 +151,8 @@ class Program
                 Console.WriteLine($"Массив расширен до {todos.Length} элементов");
             }
 
-            todos[taskCount] = multilineTask;
-            dates[taskCount] = DateTime.Now;
-            statuses[taskCount] = false;
-            taskCount++;
+            TodoItem item = new TodoItem(multilineTask);
+            todoList.Add(item);
             Console.WriteLine($" Добавлено многострочная задача");
         }
         else
@@ -175,16 +173,8 @@ class Program
                 return;
             }
 
-            if (taskCount >= todos.Length)
-            {
-                ExpandArrays();
-                Console.WriteLine($"Массив расширен до {todos.Length} элементов");
-            }
-
-            todos[taskCount] = task;
-            dates[taskCount] = DateTime.Now;
-            statuses[taskCount] = false;
-            taskCount++;
+            TodoItem item = new TodoItem(task);
+            todoList.Add(item);
             Console.WriteLine($" Добавлено: {task}");
         }
     }
