@@ -2,15 +2,8 @@
 
 class Program
 {
-    static string firstName;
-    static string surname;
-    static int birthYear;
-    static int age;
-
-    static string[] todos = new string[2];
-    static int taskCount = 0;
-    static bool[] statuses = new bool[2];
-    static DateTime[] dates = new DateTime[2];
+    static Profile userProfile;
+    static TodoList todoList;
 
     static void Main(string[] args)
     {
@@ -25,10 +18,10 @@ class Program
         Console.WriteLine("Tell me your year of birth:");
         birthYear = int.Parse(Console.ReadLine());
 
-        DateTime currentDate = DateTime.Today;
-        age = currentDate.Year - birthYear;
+        userProfile = new Profile(firstName, surname, birthYear);
+        todoList = new TodoLst();
 
-        Console.WriteLine($"New user Added: {firstName} {surname}, Age: {age}");
+        Console.WriteLine($"New user Added: {userProfile.GetInfo()}");
 
         Console.WriteLine("Добро пожаловать в todoList.");
 
@@ -111,7 +104,7 @@ class Program
 
     static void Profile()
     {
-        Console.WriteLine($"\n{firstName} {surname}, {birthYear} год рождения ({age} лет)");
+        Console.WriteLine($"\n{userProfile.GetInfo()}");
     }
 
     static void Add(string argument)
