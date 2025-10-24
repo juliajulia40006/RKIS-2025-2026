@@ -252,12 +252,12 @@ class Program
 
     static void Done(string argument)
     {
-        if (int.TryParse(argument, out int taskIndex) && taskIndex >= 1 && taskIndex <= taskCount)
+        if (int.TryParse(argument, out int taskIndex) && taskIndex >= 1 && taskIndex <= todoList.Count)
         {
             int index = taskIndex - 1;
-            statuses[index] = true;
-            dates[index] = DateTime.Now;
-            Console.WriteLine($"Задача '{todos[index]}' отмечена как выполненная!");
+            TodoItem item = todoList.GetItem(index);
+            item.MarkDone();
+            Console.WriteLine($"Задача '{item.Text}' отмечена как выполненная!");
         }
         else
         {
@@ -267,19 +267,13 @@ class Program
 
     static void Delete(string argument)
     {
-        if (int.TryParse(argument, out int deleteIndex) && deleteIndex >= 1 && deleteIndex <= taskCount)
+        if (int.TryParse(argument, out int deleteIndex) && deleteIndex >= 1 && deleteIndex <= todoList.Count)
         {
             int index = deleteIndex - 1;
-            string deletedTask = todos[index];
+            TodoItem item = todoList.GetItem(index);
+            string deletedTask = item.Text;
 
-            for (int i = index; i < taskCount - 1; i++)
-            {
-                todos[i] = todos[i + 1];
-                dates[i] = dates[i + 1];
-                statuses[i] = statuses[i + 1];
-            }
-
-            taskCount--;
+            todoList.Delete(index);
             Console.WriteLine($"Задача '{deletedTask}' удалена.");
         }
         else
