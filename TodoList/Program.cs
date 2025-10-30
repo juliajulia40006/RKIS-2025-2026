@@ -84,22 +84,24 @@ class Program
 
     static void Help()
     {
-        Console.WriteLine("---------------------------------------------------------");
-        Console.WriteLine("\nhelp    - список команд.");
-        Console.WriteLine("profile - данные пользователя.");
-        Console.WriteLine("add     - добавить задачу (add \"текст\").");
-        Console.WriteLine("view - показать задачи.");
-        Console.WriteLine("done <idx> - пометить задачу как выполненную.");
-        Console.WriteLine("delete  - удаляет задачу.");
-        Console.WriteLine("update \"idx\" new_text - обновляет текст задачи.");
-        Console.WriteLine("read <idx> - прочитать полный текст задачи " );
-        Console.WriteLine("exit    - выход.");
-        Console.WriteLine("---------------------------------------------------------");
-        Console.WriteLine("Индексы для команды view:");
-        Console.WriteLine("--index / -i - индекс задачи.");
-        Console.WriteLine("--statuses / -s - статусы.");
-        Console.WriteLine("--update-date / -d - время, дата.");
-        Console.WriteLine("--all / -a - показать всё.");
+        Console.WriteLine("""
+            ---------------------------------------------------------
+        help    - список команд.
+        profile - данные пользователя.
+        add "текст"   - добавить задачу.
+        view - показать задачи.
+        done <idx> - пометить задачу как выполненную.
+        delete  - удалить задачу.
+        update "idx" new text - обновить текст задачи.
+        read <idx> - прочитать полный текст задачи.
+        exit    - выход.
+        ---------------------------------------------------------
+        Индексы для команды view:
+        --index / -i - индекс задачи.
+        --statuses / -s - статусы.
+        --update-date / -d - время, дата.
+        --all / -a - показать всё.
+        """);
     }
 
     static void Profile()
@@ -221,20 +223,6 @@ class Program
         }
 
         todoList.View(showIndex, showStatus, showDate);
-    }
-
-    static string GetFirstLine(string task)
-    {
-        if (string.IsNullOrEmpty(task))
-            return task;
-
-        int newLineIndex = task.IndexOf('\n');
-        if (newLineIndex >= 0)
-        {
-            return task.Substring(0, newLineIndex) + "...";
-        }
-
-        return task;
     }
 
 
