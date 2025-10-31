@@ -34,3 +34,13 @@ lesson 6: edits.
 	-удалены лишние Console.WriteLine();
 -удалено дублирование GetFirstline из Program.cs.
 */
+
+/*
+lesson 7: 
++добавлен интерфейс ICommand
++добавленны классы AddCommand, ViewCommand, ReadCommand, UpdateCommand, DeleteCommand и др.
++добавлен новый класс CommandParser
++для обновления текста команды больше не требуется "" для запроса индекса.
++внесены небольшие изменения в режим multiline.
+-удалены старые классы, которые были заменены новыми , из program.cs
+*/
