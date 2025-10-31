@@ -48,17 +48,23 @@
     {
         var command = new AddCommand { TodoList = todolist };
 
-        if (argument == "--multiline" || argument == "-m")
+        if (string.IsNullOrEmpty(argument))
+        {
+            command.Multiline = false;
+            command.TaskText = "";
+            return command;
+        }
+
+        string cleanArgument = argument.Trim().ToLower();
+
+        if (cleanArgument == "--multiline" || cleanArgument == "-m")
         {
             command.Multiline = true;
         }
         else
         {
-            string[] taskParts = argument.Split(new char[] { '"' }, StringSplitOptions.RemoveEmptyEntries);
-            if (taskParts.Length > 0)
-            {
-                command.TaskText = taskParts[0].Trim();
-            }
+            command.Multiline = false;
+            command.TaskText = argument.Trim();
         }
 
         return command;
@@ -124,7 +130,7 @@
 
     private static ICommand ParseUpdateCommand(string argument, TodoList todolist)
     {
-        string[] updateParts = argument.Split(new char[] { '"' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] updateParts = argument.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         if (updateParts.Length >= 2 && int.TryParse(updateParts[0].Trim(), out int updateIndex))
         {
             return new UpdateCommand

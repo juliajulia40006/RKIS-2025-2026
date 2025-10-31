@@ -6,12 +6,6 @@
 
     public void Execute()
     {
-        if (string.IsNullOrEmpty(TaskText))
-        {
-            Console.WriteLine("Ошибка: Текст задачи не может быть пустым.");
-            return;
-        }
-
         if (Multiline)
         {
             Console.WriteLine("Многострочный режим. Вводите задачи (для завершения введите !end):");
@@ -43,13 +37,19 @@
 
             TodoItem item = new TodoItem(multilineTask);
             TodoList.Add(item);
-            Console.WriteLine($" Добавлена многострочная задача");
+            Console.WriteLine("Добавлена многострочная задача");
         }
         else
         {
+            if (string.IsNullOrEmpty(TaskText))
+            {
+                Console.WriteLine("Ошибка: Текст задачи не может быть пустым.");
+                return;
+            }
+
             TodoItem item = new TodoItem(TaskText);
             TodoList.Add(item);
-            Console.WriteLine($" Добавлено: {TaskText}.");
+            Console.WriteLine($"Добавлено: {TaskText}.");
         }
     }
 }

@@ -34,7 +34,7 @@
     public string GetFullInfo()
     {
         string status = IsDone ? "выполнено" : "не выполнено";
-        return $"Текст: {Text}\nСтатус: {status}\nДата изменения: {LastUpdate}";
+        return $"Текст: \n{Text}\nСтатус: {status}\nДата изменения: {LastUpdate}";
     }
 
     private string GetFirstLine(string task)
