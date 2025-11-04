@@ -1,4 +1,5 @@
-﻿public class TodoList
+﻿namespace TodoList;
+public class TodoList
 {
     private TodoItem[] items;
     private int count;

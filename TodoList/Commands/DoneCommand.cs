@@ -1,4 +1,6 @@
-﻿public class ReadCommand : ICommand
+﻿using TodoList;
+namespace TodoList.Commands;
+public class DoneCommand : ICommand
 {
     public int TaskIndex { get; set; }
     public TodoList TodoList { get; set; }
@@ -9,8 +11,8 @@
         {
             int index = TaskIndex - 1;
             TodoItem item = TodoList.GetItem(index);
-            Console.WriteLine($"Задача #{TaskIndex}:");
-            Console.WriteLine(item.GetFullInfo());
+            item.MarkDone();
+            Console.WriteLine($"Задача '{item.Text}' отмечена как выполненная!");
         }
         else
         {

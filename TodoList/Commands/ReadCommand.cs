@@ -1,4 +1,6 @@
-﻿public class DeleteCommand : ICommand
+﻿using TodoList;
+namespace TodoList.Commands;
+public class ReadCommand : ICommand
 {
     public int TaskIndex { get; set; }
     public TodoList TodoList { get; set; }
@@ -9,10 +11,8 @@
         {
             int index = TaskIndex - 1;
             TodoItem item = TodoList.GetItem(index);
-            string deletedTask = item.Text;
-
-            TodoList.Delete(index);
-            Console.WriteLine($"Задача '{deletedTask}' удалена.");
+            Console.WriteLine($"Задача #{TaskIndex}:");
+            Console.WriteLine(item.GetFullInfo());
         }
         else
         {

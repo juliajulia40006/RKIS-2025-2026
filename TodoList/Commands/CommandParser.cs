@@ -1,4 +1,7 @@
-﻿public static class CommandParser
+﻿using TodoList;
+namespace TodoList.Commands;
+
+public static class CommandParser
 {
     public static ICommand  Parse(string inputString, TodoList todolist, Profile profile)
     {

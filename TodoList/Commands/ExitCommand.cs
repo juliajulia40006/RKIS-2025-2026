@@ -1,4 +1,6 @@
-﻿public class ExitCommand : ICommand
+﻿using TodoList;
+namespace TodoList.Commands;
+public class ExitCommand : ICommand
 {
     public void Execute()
     {

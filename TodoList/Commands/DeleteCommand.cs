@@ -1,4 +1,6 @@
-﻿public class DoneCommand : ICommand
+﻿using TodoList;
+namespace TodoList.Commands;
+public class DeleteCommand : ICommand
 {
     public int TaskIndex { get; set; }
     public TodoList TodoList { get; set; }
@@ -9,8 +11,10 @@
         {
             int index = TaskIndex - 1;
             TodoItem item = TodoList.GetItem(index);
-            item.MarkDone();
-            Console.WriteLine($"Задача '{item.Text}' отмечена как выполненная!");
+            string deletedTask = item.Text;
+
+            TodoList.Delete(index);
+            Console.WriteLine($"Задача '{deletedTask}' удалена.");
         }
         else
         {

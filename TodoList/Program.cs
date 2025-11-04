@@ -1,9 +1,11 @@
 ﻿using System;
-
+using TodoList.Commands;
+using TodoList;
+using MainTodoList=TodoList.TodoList;
 class Program
 {
     static Profile userProfile;
-    static TodoList todoList;
+    static MainTodoList todoList;
 
     static void Main(string[] args)
     {
@@ -19,7 +21,7 @@ class Program
         int birthYear = int.Parse(Console.ReadLine());
 
         userProfile = new Profile(firstName, surname, birthYear);
-        todoList = new TodoList();
+        todoList = new MainTodoList();
 
         Console.WriteLine($"New user Added: {userProfile.GetInfo()}");
 

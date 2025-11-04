@@ -1,4 +1,5 @@
-﻿public class TodoItem
+﻿namespace TodoList;
+public class TodoItem
 {
     public string Text { get; private set; }
     public bool IsDone { get; private set; }

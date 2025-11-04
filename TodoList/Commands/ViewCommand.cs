@@ -1,4 +1,7 @@
-﻿public class ViewCommand : ICommand
+﻿using TodoList;
+namespace TodoList.Commands;
+
+public class ViewCommand : ICommand
 {
     public bool ShowIndex { get; set; } = false;
     public bool ShowStatus { get; set; } = false;

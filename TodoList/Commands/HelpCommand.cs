@@ -1,4 +1,6 @@
-﻿public class HelpCommand : ICommand
+﻿using TodoList;
+namespace TodoList.Commands;
+public class HelpCommand : ICommand
 {
     public void Execute()
     {

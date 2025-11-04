@@ -1,4 +1,6 @@
-﻿using System;
+﻿namespace TodoList.Commands;
+
+using System;
 
 public interface ICommand
 {
