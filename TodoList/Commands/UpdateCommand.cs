@@ -1,5 +1,4 @@
-﻿using TodoList;
-namespace TodoList.Commands;
+﻿namespace TodoList.Commands;
 public class UpdateCommand : ICommand
 {
     public int TaskIndex { get; set; }

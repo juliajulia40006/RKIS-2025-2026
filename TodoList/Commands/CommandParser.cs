@@ -1,5 +1,4 @@
-﻿using TodoList;
-namespace TodoList.Commands;
+﻿namespace TodoList.Commands;
 
 public static class CommandParser
 {

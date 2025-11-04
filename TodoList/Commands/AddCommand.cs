@@ -1,5 +1,4 @@
-﻿using TodoList;
-namespace TodoList.Commands;
+﻿namespace TodoList.Commands;
 public class AddCommand : ICommand
 {
     public bool Multiline { get; set; } = false;
