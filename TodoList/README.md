@@ -43,4 +43,10 @@ lesson 7:
 +для обновления текста команды больше не требуется "" для запроса индекса.
 +внесены небольшие изменения в режим multiline.
 -удалены старые классы, которые были заменены новыми , из program.cs
+
+---
+Lesson7/: edits 
++добавлены namespace TodoList для классов Profile ,TodoList , TodoItem
++добавлен namespace TodoList.Commands для ICommand и *command.cs
++ "using MainTodoList=TodoList.TodoList" добавлен для разрешения ошибки ""TodoList" является пространство имен, но используется как тип."
 */
