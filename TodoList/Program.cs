@@ -16,6 +16,9 @@ class Program
     {
         Console.WriteLine("The program was made by Deinega and Piyagova");
 
+        FileManager.EnsureDataDirectory(dataDirectory);
+        userProfile = FileManager.LoadProfile(profileFilePath);
+
         Console.WriteLine("Tell me your name:");
         string firstName = Console.ReadLine();
 
