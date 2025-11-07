@@ -50,3 +50,15 @@ Lesson7/: edits
 +добавлен namespace TodoList.Commands для ICommand и *command.cs
 + "using MainTodoList=TodoList.TodoList" добавлен для разрешения ошибки ""TodoList" является пространство имен, но используется как тип."
 */
+
+/*
+lesson 8: 
++ добавлен класс FileManager
++ добавлены методы EnsureDataDirectory, SaveProfile, LoadProfile, SaveTodos, LoadTodos, ParseCsvLine, CountFields.
++ добавлено сохранение данных после каждой сессии программы.
++ добавлена проверка на наличие профиля
++ добавлена проверка на наличие задач
++ исправлен метод update в commandparser. 
++ исправлена проблема падения команды после ввода данных не числового типа в подсчёте возраста. 
+	 Добавлена проверка на числовой тип данных
+*/

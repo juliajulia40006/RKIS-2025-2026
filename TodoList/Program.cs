@@ -3,6 +3,7 @@ using TodoList.Commands;
 using TodoList;
 using MainTodoList=TodoList.TodoList;
 using System.IO;
+using System.Runtime.ConstrainedExecution;
 
 class Program
 {
@@ -30,7 +31,12 @@ class Program
             string surname = Console.ReadLine();
 
             Console.WriteLine("Tell me your year of birth:");
-            int birthYear = int.Parse(Console.ReadLine());
+            int birthYear;
+            while (!int.TryParse(Console.ReadLine(), out birthYear))
+            {
+                Console.WriteLine("Ошибка: Введите корректный год рождения (число)!");
+                return;
+            }
 
             userProfile = new Profile(firstName, surname, birthYear);
             todoList = new MainTodoList();
