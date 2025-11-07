@@ -20,3 +20,20 @@ public static void SaveProfile(Profile profile, string filePath)
             writer.WriteLine(profile.BirthYear);
         }
     }
+
+    public static Profile LoadProfile(string filePath)
+    {
+        if (!File.Exists(filePath))
+        {
+            return null;
+        }
+
+        using (StreamReader reader = new StreamReader(filePath))
+        {
+            string firstName = reader.ReadLine();
+            string lastName = reader.ReadLine();
+            int birthYear = int.Parse(reader.ReadLine());
+
+            return new Profile(firstName, lastName, birthYear);
+        }
+    }
