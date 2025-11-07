@@ -14,24 +14,26 @@ class Program
 
     static void Main(string[] args)
     {
-        Console.WriteLine("The program was made by Deinega and Piyagova");
+        if (userProfile == null)
+        {
+            Console.WriteLine("The program was made by Deinega and Piyagova");
 
-        FileManager.EnsureDataDirectory(dataDirectory);
-        userProfile = FileManager.LoadProfile(profileFilePath);
+            Console.WriteLine("Tell me your name:");
+            string firstName = Console.ReadLine();
 
-        Console.WriteLine("Tell me your name:");
-        string firstName = Console.ReadLine();
+            Console.WriteLine("Tell me your surname:");
+            string surname = Console.ReadLine();
 
-        Console.WriteLine("Tell me your surname:");
-        string surname = Console.ReadLine();
+            Console.WriteLine("Tell me your year of birth:");
+            int birthYear = int.Parse(Console.ReadLine());
 
-        Console.WriteLine("Tell me your year of birth:");
-        int birthYear = int.Parse(Console.ReadLine());
+            userProfile = new Profile(firstName, surname, birthYear);
+            todoList = new MainTodoList();
+            FileManager.SaveProfile(userProfile, profileFilePath);
 
-        userProfile = new Profile(firstName, surname, birthYear);
-        todoList = new MainTodoList();
+            Console.WriteLine($"New user Added: {userProfile.GetInfo()}");
+        }
 
-        Console.WriteLine($"New user Added: {userProfile.GetInfo()}");
 
         Console.WriteLine("Добро пожаловать в todoList.");
 
