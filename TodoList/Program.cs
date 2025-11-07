@@ -14,9 +14,14 @@ class Program
 
     static void Main(string[] args)
     {
+        Console.WriteLine("The program was made by Deinega and Piyagova");
+
+        FileManager.EnsureDataDirectory(dataDirectory);
+
+        userProfile = FileManager.LoadProfile(profileFilePath);
+
         if (userProfile == null)
         {
-            Console.WriteLine("The program was made by Deinega and Piyagova");
 
             Console.WriteLine("Tell me your name:");
             string firstName = Console.ReadLine();
@@ -33,7 +38,11 @@ class Program
 
             Console.WriteLine($"New user Added: {userProfile.GetInfo()}");
         }
-
+        else
+        {
+            Console.WriteLine($"Welcome back, {userProfile.GetInfo()}");
+        }
+        
         todoList = FileManager.LoadTodos(todosFilePath);
 
         if (todoList.Count > 0)

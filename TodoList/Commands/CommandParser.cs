@@ -132,16 +132,33 @@ public static class CommandParser
 
     private static ICommand ParseUpdateCommand(string argument, TodoList todolist)
     {
-        string[] updateParts = argument.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-        if (updateParts.Length >= 2 && int.TryParse(updateParts[0].Trim(), out int updateIndex))
+        if (string.IsNullOrEmpty(argument))
+        {
+            Console.WriteLine("Ошибка: Используйте: update <номер> новый текст");
+            return new UpdateCommand { TodoList = todolist };
+        }
+
+        int firstSpaceIndex = argument.IndexOf(' ');
+        if (firstSpaceIndex <= 0)
+        {
+            Console.WriteLine("Ошибка: Используйте: update <номер> новый текст");
+            return new UpdateCommand { TodoList = todolist };
+        }
+
+        string indexPart = argument.Substring(0, firstSpaceIndex).Trim();
+        string textPart = argument.Substring(firstSpaceIndex + 1).Trim();
+
+        if (int.TryParse(indexPart, out int updateIndex) && !string.IsNullOrEmpty(textPart))
         {
             return new UpdateCommand
             {
                 TodoList = todolist,
                 TaskIndex = updateIndex,
-                NewText = updateParts[1].Trim()
+                NewText = textPart
             };
         }
+
+        Console.WriteLine("Ошибка: Используйте: update <номер> новый текст");
         return new UpdateCommand { TodoList = todolist };
     }
 
