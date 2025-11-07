@@ -34,6 +34,16 @@ class Program
             Console.WriteLine($"New user Added: {userProfile.GetInfo()}");
         }
 
+        todoList = FileManager.LoadTodos(todosFilePath);
+
+        if (todoList.Count > 0)
+        {
+            Console.WriteLine($"\nЗагружено {todoList.Count} задач из сохранения.");
+        }
+        else
+        {
+            Console.WriteLine("\nСохраненных задач не найдено.");
+        }
 
         Console.WriteLine("Добро пожаловать в todoList.");
 
