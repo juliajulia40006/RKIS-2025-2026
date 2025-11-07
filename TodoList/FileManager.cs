@@ -9,17 +9,16 @@ public static class FileManager
             Directory.CreateDirectory(dirPath);
         }
     }
-}
 
-public static void SaveProfile(Profile profile, string filePath)
-    {
-        using (StreamWriter writer = new StreamWriter(filePath))
+    public static void SaveProfile(Profile profile, string filePath)
         {
-            writer.WriteLine(profile.FirstName);
-            writer.WriteLine(profile.LastName);
-            writer.WriteLine(profile.BirthYear);
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                writer.WriteLine(profile.FirstName);
+                writer.WriteLine(profile.LastName);
+                writer.WriteLine(profile.BirthYear);
+            }
         }
-    }
 
     public static Profile LoadProfile(string filePath)
     {
@@ -72,25 +71,10 @@ public static void SaveProfile(Profile profile, string filePath)
                 if (string.IsNullOrWhiteSpace(line))
                     continue;
 
-                string[] parts = ParseCsvLine(line);
-
-                if (parts.Length >= 3)
-                {
-                    string text = parts[0].Replace("\"\"", "\"");
-                    string status = parts[1];
-                    string dateString = parts[2];
-
-                    TodoItem item = new TodoItem(text);
-
-                    if (status.ToLower() == "done")
-                    {
-                        item.MarkDone();
-                    }
-
-                    todoList.Add(item);
-                }
+                
             }
         }
 
         return todoList;
     }
+}
