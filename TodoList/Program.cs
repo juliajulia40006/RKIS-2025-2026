@@ -35,7 +35,6 @@ class Program
             while (!int.TryParse(Console.ReadLine(), out birthYear))
             {
                 Console.WriteLine("Ошибка: Введите корректный год рождения (число)!");
-                return;
             }
 
             userProfile = new Profile(firstName, surname, birthYear);
