@@ -56,7 +56,18 @@ class Program
                 continue;
 
             ICommand command = CommandParser.Parse(input, todoList, userProfile);
+
+            if (command is ExitCommand)
+            {
+                FileManager.SaveProfile(userProfile, profileFilePath);
+                FileManager.SaveTodos(todoList, todosFilePath);
+                command.Execute();
+                break;
+            }
             command?.Execute();
+
+            FileManager.SaveProfile(userProfile, profileFilePath);
+            FileManager.SaveTodos(todoList, todosFilePath);
         }
     }
 }
