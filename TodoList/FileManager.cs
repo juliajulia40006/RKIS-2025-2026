@@ -37,3 +37,20 @@ public static void SaveProfile(Profile profile, string filePath)
             return new Profile(firstName, lastName, birthYear);
         }
     }
+
+    public static void SaveTodos(TodoList todos, string filePath)
+    {
+        using (StreamWriter writer = new StreamWriter(filePath))
+        {
+            writer.WriteLine("Text,Status,LastUpdate");
+
+            for (int i = 0; i < todos.Count; i++)
+            {
+                TodoItem item = todos.GetItem(i);
+                string text = item.Text.Replace("\"", "\"\"");
+                string status = item.IsDone ? "done" : "pending";
+                string date = item.LastUpdate.ToString("yyyy-MM-dd HH:mm:ss");
+                writer.WriteLine($"\"{text}\",{status},{date}");
+            }
+        }
+    }
