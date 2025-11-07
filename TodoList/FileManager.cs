@@ -54,3 +54,43 @@ public static void SaveProfile(Profile profile, string filePath)
             }
         }
     }
+
+    public static TodoList LoadTodos(string filePath)
+    {
+        TodoList todoList = new TodoList();
+
+        if (!File.Exists(filePath))
+        {
+            return todoList;
+        }
+
+        using (StreamReader reader = new StreamReader(filePath))
+        {
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                    continue;
+
+                string[] parts = ParseCsvLine(line);
+
+                if (parts.Length >= 3)
+                {
+                    string text = parts[0].Replace("\"\"", "\"");
+                    string status = parts[1];
+                    string dateString = parts[2];
+
+                    TodoItem item = new TodoItem(text);
+
+                    if (status.ToLower() == "done")
+                    {
+                        item.MarkDone();
+                    }
+
+                    todoList.Add(item);
+                }
+            }
+        }
+
+        return todoList;
+    }
