@@ -2,10 +2,15 @@
 using TodoList.Commands;
 using TodoList;
 using MainTodoList=TodoList.TodoList;
+using System.IO;
+
 class Program
 {
     static Profile userProfile;
     static MainTodoList todoList;
+    static string dataDirectory = "data";
+    static string profileFilePath = Path.Combine("data", "profile.txt");
+    static string todosFilePath = Path.Combine("data", "todo.csv");
 
     static void Main(string[] args)
     {
