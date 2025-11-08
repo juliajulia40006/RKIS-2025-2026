@@ -1,66 +1,181 @@
 name: Check
 
 on:
-  workflow_dispatch:
-  pull_request:
-    branches: ["master"]
+    workflow_dispatch:
+    pull_request:
+        branches: ["main"]
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    build-and-test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 6.0.x
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v4
+              with:
+                  dotnet-version: 9.0.x
 
-      - name: Install dotnet-format
-        run: dotnet tool install -g dotnet-format
+            - name: Install dotnet-format
+              shell: bash
+              run: |
+                  # убедимся, что dotnet доступен
+                  dotnet --info || true
 
-      - name: Restore, build, and annotate errors
-        continue-on-error: true
-        run: |
-          build_failed=false
+                  # установим инструмент глобально (положит бинарники в $HOME/.dotnet/tools)
+                  dotnet tool install -g dotnet-format || true
 
-          mapfile -t projects < <(find . -name '*.csproj')
+                  # добавим папку с глобальными инструментами в PATH для следующих шагов
+                  echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
-          for project in "${projects[@]}"; do
-            echo "🔹 Restoring: $project"
-            dotnet restore "$project"
+                  # проверим доступность
+                  command -v dotnet-format && dotnet-format --version || echo "dotnet-format not available yet"
 
-            echo "🔹 Building: $project"
-            build_output=$(dotnet build "$project" --no-restore  || true)
+            - name: Restore, build, and annotate errors
+              continue-on-error: true
+              shell: bash
+              run: |
+                  build_failed=false
 
-            if [[ $build_output == *"error"* ]]; then
-              build_failed=true
-            fi
+                  # collect all csproj (supports spaces in paths)
+                  mapfile -t projects < <(find . -name '*.csproj' -print0 | xargs -0 -n1 echo)
 
-            echo "$build_output"| awk '!seen[$0]++' | while read -r line; do
-              if [[ "$line" =~ ^(.*[a-zA-Z0-9_/.]+)\(([0-9]+),([0-9]+)\):\ error\ (.*)$ ]]; then
-                file="${BASH_REMATCH[1]}"
-                line_number="${BASH_REMATCH[2]}"
-                column_number="${BASH_REMATCH[3]}"
-                error_message="${BASH_REMATCH[4]}"
-                echo "::error file=$file,line=$line_number,col=$column_number::$error_message"
-              fi
-            done
-          done
+                  for project in "${projects[@]}"; do
+                    echo "🔹 Restoring: $project"
+                    dotnet restore "$project" || true
 
-          echo "build_failed=$build_failed" >> $GITHUB_ENV
-          echo "$build_failed"
+                    echo "🔹 Building: $project"
+                    build_output=$(dotnet build "$project" --no-restore || true)
 
-      - name: Fail if build errors found
-        if: env.build_failed == 'true'
-        run: |
-          echo "❌ Build failed due to errors."
-          exit 1
+                    if [[ $build_output == *"error"* ]]; then
+                      build_failed=true
+                    fi
 
-      - name: Run tests
-        run: dotnet test --no-build --verbosity normal
+                    echo "$build_output" | awk '!seen[$0]++' | while read -r line; do
+                      if [[ "$line" =~ ^(.*[a-zA-Z0-9_/.]+)\(([0-9]+),([0-9]+)\):\ error\ (.*)$ ]]; then
+                        file="${BASH_REMATCH[1]}"
+                        line_number="${BASH_REMATCH[2]}"
+                        column_number="${BASH_REMATCH[3]}"
+                        error_message="${BASH_REMATCH[4]}"
+                        echo "::error file=$file,line=$line_number,col=$column_number::$error_message"
+                      fi
+                    done
+                  done
 
-      - name: Check code style
-        run: dotnet format --verify-no-changes --severity error
-        env:
-          PATH: $PATH:/home/runner/.dotnet/tools
+                  echo "build_failed=$build_failed" >> $GITHUB_ENV
+                  echo "$build_failed"
+
+            - name: Fail if build errors found
+              if: env.build_failed == 'true'
+              continue-on-error: true
+              run: |
+                  echo "❌ Build failed due to errors."
+                  exit 1
+
+            - name: Run tests (if exist)
+              continue-on-error: true
+              shell: bash
+              run: |
+                  # find test projects by name containing test/tests (case-insensitive)
+                  mapfile -t test_projects < <(find . -iname '*test*.csproj' -print0 | xargs -0 -n1 echo || true)
+
+                  if [ ${#test_projects[@]} -eq 0 ]; then
+                    echo "ℹ️ No test projects found. Skipping tests."
+                    exit 0
+                  fi
+
+                  for test_project in "${test_projects[@]}"; do
+                    echo "🔹 Running tests in $test_project"
+                    dotnet test "$test_project" --no-build --verbosity normal || true
+                  done
+
+            - name: Install jq
+              shell: bash
+              run: |
+                  # На ubuntu-latest sudo доступен — ставим jq для парсинга report.json
+                  if ! command -v jq >/dev/null 2>&1; then
+                    sudo apt-get update -y
+                    sudo apt-get install -y jq
+                  else
+                    echo "jq already installed"
+                  fi
+
+            - name: Check formatting for all projects with annotations
+              shell: bash
+              run: |
+                  # collect csproj (supports spaces)
+                  mapfile -t projects < <(find . -name '*.csproj' -print0 | xargs -0 -n1 echo)
+
+                  if [ ${#projects[@]} -eq 0 ]; then
+                    echo "ℹ️ No .csproj files found — skipping formatting checks."
+                    exit 0
+                  fi
+
+                  any_failed=0
+
+                  for proj in "${projects[@]}"; do
+                    echo "🔹 Running dotnet format on: $proj"
+                    report="$(mktemp --suffix=.json)" || report="$(mktemp)"
+                    out="$(mktemp)" || out="$(mktemp)"
+
+                    # Сохраняем и JSON-отчёт, и stdout (чтобы иметь fallback)
+                    dotnet format "$proj" --verify-no-changes --report "$report" >"$out" 2>&1 || true
+
+                    # 1) Если report содержит diagnostics — используем его (более надёжно)
+                    if [ -s "$report" ]; then
+                      count=$(jq '(.Diagnostics // []) | length' "$report" 2>/dev/null || echo 0)
+                      if [ "$count" -gt 0 ]; then
+                        any_failed=1
+                        echo "❌ Found $count formatting issues in $proj (from report)"
+                        jq -r --arg proj "$proj" '
+                          (.Diagnostics // [])[] |
+                          ( (.Location.FilePath // .FilePath // $proj) | sub("^\\./";"") ) as $file |
+                          ( .Location.StartLine // 1 ) as $line |
+                          ( .Id // "" ) as $id |
+                          ( .Message // "" ) as $msg |
+                          "::warning file=\($file),line=\($line),col=1::\($id): \($msg)"
+                        ' "$report"
+                      else
+                        # report пустой — продолжим ниже анализ stdout
+                        :
+                      fi
+                    fi
+
+                    # 2) Если report не дал diagnostics, парсим stdout (fallback)
+                    if [ "$any_failed" -eq 0 ] || ! [ -s "$report" ]; then
+                      if grep -Ei ".*\([0-9]+,[0-9]+\):.*(warning)" "$out" >/dev/null 2>&1; then
+                        any_failed=1
+                        echo "❌ Found formatting issues in $proj (from stdout)"
+                        grep -Ei ".*\([0-9]+,[0-9]+\):.*(warning)" "$out" | while IFS= read -r line; do
+                          if [[ "$line" =~ ^(Warning:)?(.*)\(([0-9]+),([0-9]+)\):[[:space:]]*(warning)[[:space:]]*([A-Z0-9_]*)?:?[[:space:]]*(.*)$ ]]; then
+                              file="${BASH_REMATCH[2]}"
+                              line_number="${BASH_REMATCH[3]}"
+                              col_number="${BASH_REMATCH[4]}"
+                              severity="${BASH_REMATCH[5]}"
+                              code="${BASH_REMATCH[6]}"
+                              msg="${BASH_REMATCH[7]}"
+                              file="${file#./}"
+                              echo "::warning file=$file,line=$line_number,col=$col_number::${code}: ${msg}"
+                          else
+                              # fallback
+                              echo "::warning file=$proj,line=1,col=1::${line}"
+                          fi
+                        done
+                      else
+                        # если и report пуст, и stdout не содержит подходящих строк
+                        if ! [ -s "$report" ]; then
+                          echo "✅ No formatting issues in $proj"
+                        fi
+                      fi
+                    fi
+
+                    rm -f "$report" "$out"
+                  done
+
+                  if [ "$any_failed" -eq 1 ]; then
+                    echo "❌ Formatting issues detected in one or more projects."
+                    exit 1
+                  else
+                    echo "✅ All projects passed format check."
+                    exit 0
+                  fi

@@ -1,0 +1,106 @@
+# top-most EditorConfig file
+root = true
+
+# ------------------------------------------------------
+# 🧱 Общие настройки
+# ------------------------------------------------------
+[*]
+indent_style = tab
+indent_size = 4
+insert_final_newline = true:suggestion
+trim_trailing_whitespace = true:suggestion
+
+# ------------------------------------------------------
+# 💻 Настройки для C#
+# ------------------------------------------------------
+[*.cs]
+
+# ============ Отступы и форматирование ============
+
+# Блоки и фигурные скобки
+csharp_indent_block_contents = true
+csharp_indent_braces = false
+csharp_indent_switch_labels = true
+csharp_new_line_before_open_brace = all
+csharp_new_line_between_members = true
+
+# Пробелы и отступы
+csharp_space_after_keywords_in_control_flow_statements = true
+csharp_space_after_cast = false
+csharp_space_before_colon_in_inheritance_clause = true
+csharp_space_after_colon_in_inheritance_clause = true
+csharp_space_around_binary_operators = before_and_after
+
+# Не требовать скобок для однострочных if / for / while
+csharp_prefer_braces = false:suggestion
+
+# Пространства имён и форматирование
+csharp_style_namespace_declarations = file_scoped:warning
+
+# ------------------------------------------------------
+# ⚙️ Модификаторы и квалификации
+# ------------------------------------------------------
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:warning
+dotnet_style_qualification_for_field = false:warning
+dotnet_style_qualification_for_property = false:warning
+dotnet_style_qualification_for_method = false:warning
+dotnet_style_qualification_for_event = false:warning
+
+# ------------------------------------------------------
+# ✂️ Неиспользуемые using и переменные
+# ------------------------------------------------------
+dotnet_diagnostic.IDE0005.severity = warning   # Неиспользуемые using
+dotnet_diagnostic.CS0168.severity = warning    # Переменная объявлена, но не используется
+dotnet_diagnostic.CS0219.severity = warning    # Переменной присвоено, но не используется
+
+# Лишние пробелы, отступы, форматирование — не ошибка
+dotnet_diagnostic.IDE0055.severity = suggestion
+dotnet_diagnostic.IDE2000.severity = suggestion
+
+# ------------------------------------------------------
+# 🔤 Именование (PascalCase / camelCase)
+# ------------------------------------------------------
+
+# Стиль PascalCase
+dotnet_naming_style.pascal_case_style.capitalization = pascal_case
+
+# Стиль camelCase
+dotnet_naming_style.camel_case_style.capitalization = camel_case
+
+# Символы
+dotnet_naming_symbols.classes_and_structs.applicable_kinds = class, struct
+dotnet_naming_symbols.classes_and_structs.applicable_accessibilities = *
+dotnet_naming_symbols.methods_and_properties.applicable_kinds = method, property
+dotnet_naming_symbols.methods_and_properties.applicable_accessibilities = *
+dotnet_naming_symbols.local_variables.applicable_kinds = local
+dotnet_naming_symbols.local_variables.applicable_accessibilities = *
+dotnet_naming_symbols.parameters.applicable_kinds = parameter
+dotnet_naming_symbols.parameters.applicable_accessibilities = *
+
+# Правила
+dotnet_naming_rule.classes_and_structs_should_be_pascal_case.symbols = classes_and_structs
+dotnet_naming_rule.classes_and_structs_should_be_pascal_case.style = pascal_case_style
+dotnet_naming_rule.classes_and_structs_should_be_pascal_case.severity = warning
+
+dotnet_naming_rule.methods_and_properties_should_be_pascal_case.symbols = methods_and_properties
+dotnet_naming_rule.methods_and_properties_should_be_pascal_case.style = pascal_case_style
+dotnet_naming_rule.methods_and_properties_should_be_pascal_case.severity = warning
+
+dotnet_naming_rule.local_variables_should_be_camel_case.symbols = local_variables
+dotnet_naming_rule.local_variables_should_be_camel_case.style = camel_case_style
+dotnet_naming_rule.local_variables_should_be_camel_case.severity = warning
+
+dotnet_naming_rule.parameters_should_be_camel_case.symbols = parameters
+dotnet_naming_rule.parameters_should_be_camel_case.style = camel_case_style
+dotnet_naming_rule.parameters_should_be_camel_case.severity = warning
+
+# ------------------------------------------------------
+# ✅ Общие предпочтения кода
+# ------------------------------------------------------
+dotnet_style_explicit_tuple_names = true:warning
+dotnet_style_prefer_auto_properties = true:warning
+dotnet_style_prefer_inferred_tuple_names = true:warning
+dotnet_style_prefer_inferred_anonymous_type_member_names = true:warning
+dotnet_style_prefer_conditional_expression_over_assignment = true:warning
+dotnet_style_prefer_simplified_boolean_expressions = true:warning
+dotnet_style_prefer_simplified_interpolation = true:warning
