@@ -41,6 +41,14 @@ public class TodoList
             return items[index];
         }
     }
+    public IEnumerator<TodoItem> GetEnumerator()
+    {
+        foreach (var item in items)
+        {
+            yield return item;
+        }
+    }
+
     public void View(bool showIndex, bool showStatus, bool showDate)
     {
         if (count == 0)
