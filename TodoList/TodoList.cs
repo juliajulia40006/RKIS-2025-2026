@@ -1,26 +1,18 @@
 ﻿namespace TodoList;
 public class TodoList
 {
-    private TodoItem[] items;
-    private int count;
-
-    public int Count => count;
+    private List<TodoItem> items;
+    public int Count => items.Count;
 
     public TodoList()
     {
-        items = new TodoItem[2];
+        items = new List<TodoItem>();
         count = 0;
     }
 
     public void Add(TodoItem item)
     {
-        if (count >= items.Length)
-        {
-            IncreaseArray();
-        }
-
-        items[count] = item;
-        count++;
+        items.Add(item);
     }
 
     public void Delete(int index)
@@ -28,13 +20,8 @@ public class TodoList
         if (index < 0 || index >= count)
             throw new ArgumentOutOfRangeException(nameof(index));
 
-        for (int i = index; i < count - 1; i++)
-        {
-            items[i] = items[i + 1];
-        }
 
-        count--;
-        items[count] = null;
+        items.RemoveAt(index);
     }
 
     public TodoItem GetItem(int index)
