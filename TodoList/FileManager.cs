@@ -11,89 +11,61 @@ public static class FileManager
     }
 
     public static void SaveProfile(Profile profile, string filePath)
-        {
-            using (StreamWriter writer = new StreamWriter(filePath))
-            {
-                writer.WriteLine(profile.FirstName);
-                writer.WriteLine(profile.LastName);
-                writer.WriteLine(profile.BirthYear);
-            }
-        }
+    {
+        string[] lines = {
+        profile.FirstName,
+        profile.LastName,
+        profile.BirthYear.ToString()
+        };
+        File.WriteAllLines(filePath, lines);
+    }
 
     public static Profile LoadProfile(string filePath)
     {
-        if (!File.Exists(filePath))
-        {
-            return null;
-        }
+        if (!File.Exists(filePath)) return null;
 
-        using (StreamReader reader = new StreamReader(filePath))
-        {
-            string firstName = reader.ReadLine();
-            string lastName = reader.ReadLine();
-            int birthYear = int.Parse(reader.ReadLine());
+        string[] lines = File.ReadAllLines(filePath);
+        if (lines.Length < 3) return null;
 
-            return new Profile(firstName, lastName, birthYear);
-        }
+        return new Profile(lines[0], lines[1], int.Parse(lines[2]));
     }
 
     public static void SaveTodos(TodoList todos, string filePath)
     {
-        using (StreamWriter writer = new StreamWriter(filePath))
-        {
-            writer.WriteLine("Index;Text;IsDone;LastUpdate");
+        string[] lines = new string[todos.Count + 1];
+        lines[0] = "Index;Text;IsDone;LastUpdate";
 
-            for (int i = 0; i < todos.Count; i++)
-            {
-                TodoItem item = todos.GetItem(i);
-                string text = item.Text
-                    .Replace("\"", "\"\"")
-                    .Replace("\n", "\\n");
-                string status = item.IsDone ? "true" : "false";
-                string date = item.LastUpdate.ToString("yyyy-MM-ddTHH:mm:ss");
-                writer.WriteLine($"{i};\"{text}\";{status};{date}");
-            }
+        for (int i = 0; i < todos.Count; i++)
+        {
+            TodoItem item = todos.GetItem(i);
+            lines[i + 1] = $"{i};\"{item.Text.Replace("\"", "\"\"").Replace("\n", "\\n")}\";{item.IsDone};{item.LastUpdate:yyyy-MM-ddTHH:mm:ss}";
         }
+
+        File.WriteAllLines(filePath, lines);
     }
 
     public static TodoList LoadTodos(string filePath)
     {
         TodoList todoList = new TodoList();
+        if (!File.Exists(filePath)) return todoList;
 
-        if (!File.Exists(filePath))
-            return todoList;
+        string[] lines = File.ReadAllLines(filePath);
 
-        using (StreamReader reader = new StreamReader(filePath))
+        for (int i = 1; i < lines.Length; i++)
         {
-            string line;
-            bool isFirstLine = true;
+            if (string.IsNullOrWhiteSpace(lines[i])) continue;
 
-            while ((line = reader.ReadLine()) != null)
-            {
-                if (isFirstLine)
-                {
-                    isFirstLine = false;
-                    continue;
-                }
+            string[] parts = lines[i].Split(';');
+            if (parts.Length < 4) continue;
 
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
+            string text = parts[1].Replace("\"\"", "\"").Replace("\\n", "\n").Trim('"');
+            bool isDone = parts[2] == "true";
 
-                string[] parts = ParseCsvLine(line);
-                if (parts.Length >= 4)
-                {
-                    string text = parts[1]
-                        .Replace("\"\"", "\"")
-                        .Replace("\\n", "\n");
-                    bool isDone = parts[2].ToLower() == "true";
-                    DateTime lastUpdate = DateTime.Parse(parts[3]);
-
-                    TodoItem item = new TodoItem(text);
-                    if (isDone) item.MarkDone();
-                    todoList.Add(item);
-                }
-            }
+            TodoItem item = new TodoItem(text);
+            if (isDone) item.MarkDone();
+            todoList.Add(item);
         }
+
         return todoList;
     }
 
