@@ -32,6 +32,15 @@ public class TodoList
         return items[index];
     }
 
+    public TodoItem this[int index]
+    {
+        get
+        {
+            if (index < 0 || index >= items.Count)
+                throw new ArgumentOutOfRangeException(nameof(index));
+            return items[index];
+        }
+    }
     public void View(bool showIndex, bool showStatus, bool showDate)
     {
         if (count == 0)
