@@ -1,4 +1,6 @@
-﻿namespace TodoList.Commands;
+﻿using static TodoList.TodoItem;
+
+namespace TodoList.Commands;
 
 public static class CommandParser
 {
@@ -110,6 +112,56 @@ public static class CommandParser
         }
 
         return command;
+    }
+
+    private static ICommand ParseStatusCommand(string argument, TodoList todolist)
+    {
+        if (string.IsNullOrEmpty(argument))
+        {
+            Console.WriteLine("Ошибка: Используйте: status <номер> <статус>");
+            return new StatusCommand { TodoList = todolist };
+        }
+
+        string[] parts = argument.Split(' ', 2);
+        if (parts.Length < 2)
+        {
+            Console.WriteLine("Ошибка: Используйте: status <номер> <статус>");
+            return new StatusCommand { TodoList = todolist };
+        }
+
+        if (int.TryParse(parts[0], out int taskIndex))
+        {
+            string statusStr = parts[1].ToLower();
+            TodoStatus status = ParseStatus(statusStr);
+
+            if (status == TodoStatus.NotStarted && statusStr != "notstarted")
+            {
+                Console.WriteLine($"Ошибка: Неизвестный статус '{parts[1]}'. Допустимые статусы: notstarted, inprogress, completed, postponed, failed");
+                return new StatusCommand { TodoList = todolist };
+            }
+
+            return new StatusCommand
+            {
+                TodoList = todolist,
+                TaskIndex = taskIndex,
+                Status = status
+            };
+        }
+
+        Console.WriteLine("Ошибка: Используйте: status <номер> <статус>");
+        return new StatusCommand { TodoList = todolist };
+    }
+    private static TodoStatus ParseStatus(string statusStr)
+    {
+        return statusStr.ToLower() switch
+        {
+            "notstarted" => TodoStatus.NotStarted,
+            "inprogress" or "improgress" => TodoStatus.InProgress, // обработка опечатки
+            "completed" => TodoStatus.Completed,
+            "postponed" => TodoStatus.Postponed,
+            "failed" => TodoStatus.Failed,
+            _ => TodoStatus.NotStarted
+        };
     }
 
     private static ICommand ParseDoneCommand(string argument, TodoList todolist)
