@@ -74,7 +74,7 @@ public class TodoList
         Console.WriteLine(header);
         Console.WriteLine(new string('-', header.Length));
 
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < items.Count; i++)
         {
             string line = "";
             var item = items[i];
@@ -101,18 +101,6 @@ public class TodoList
 
             Console.WriteLine(line.TrimEnd());
         }
-    }
-
-    private void IncreaseArray()
-    {
-        TodoItem[] newItems = new TodoItem[items.Length * 2];
-        for (int i = 0; i < items.Length; i++)
-        {
-            newItems[i] = items[i];
-        }
-        items = newItems;
-
-        Console.WriteLine($"Массив расширен до {items.Length} элементов");
     }
 
     private string GetFirstLine(string task)
