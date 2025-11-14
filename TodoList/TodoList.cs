@@ -90,7 +90,7 @@ public class TodoList
 
             if (showStatus)
             {
-                string status = item.IsDone ? "выполнено" : "не выполнено";
+                string status = item.Status ? "выполнено" : "не выполнено";
                 line += status.PadRight(statusWidth) + " ";
             }
 

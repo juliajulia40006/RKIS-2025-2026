@@ -38,7 +38,7 @@ public static class FileManager
         for (int i = 0; i < todos.Count; i++)
         {
             TodoItem item = todos.GetItem(i);
-            lines[i + 1] = $"{i};\"{item.Text.Replace("\"", "\"\"").Replace("\n", "\\n")}\";{item.IsDone};{item.LastUpdate:yyyy-MM-ddTHH:mm:ss}";
+            lines[i + 1] = $"{i};\"{item.Text.Replace("\"", "\"\"").Replace("\n", "\\n")}\";{item.Status};{item.LastUpdate:yyyy-MM-ddTHH:mm:ss}";
         }
 
         File.WriteAllLines(filePath, lines);
