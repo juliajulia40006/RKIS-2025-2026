@@ -10,7 +10,7 @@ public class HelpCommand : ICommand
         profile - данные пользователя.
         add "текст"   - добавить задачу.
         view - показать задачи.
-        done <idx> - пометить задачу как выполненную.
+        status <idx> <status>- присвоить задаче статус.
         delete <idx> - удалить задачу.
         update <idx> new text - обновить текст задачи.
         read <idx> - прочитать полный текст задачи.
@@ -21,6 +21,13 @@ public class HelpCommand : ICommand
         --statuses / -s - статусы.
         --update-date / -d - время, дата.
         --all / -a - показать всё.
+        ---------------------------------------------------------
+        Статусы для команды Status:
+        NotStarted => не начато.
+        InProgress => в процессе.
+        Completed => выполнено.
+        Postponed => отложено.
+        Failed => провалено.
         """);
     }
 }
