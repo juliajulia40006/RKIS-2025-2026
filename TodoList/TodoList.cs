@@ -49,7 +49,7 @@ public class TodoList
             yield return item;
         }
     }
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
     public void View(bool showIndex, bool showStatus, bool showDate)
     {
         if (items.Count == 0)
@@ -113,6 +113,14 @@ public class TodoList
         }
 
         return task;
+    }
+
+    public void SetStatus(int index, TodoStatus status)
+    {
+        if (index < 0 || index >= items.Count)
+            throw new ArgumentOutOfRangeException(nameof(index));
+
+        items[index].SetStatus(status);
     }
 
     private string GetStatusText(TodoStatus status)

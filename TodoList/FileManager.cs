@@ -1,4 +1,6 @@
-﻿namespace TodoList;
+﻿using static TodoList.TodoItem;
+
+namespace TodoList;
 
 public static class FileManager
 {
@@ -59,10 +61,14 @@ public static class FileManager
             if (parts.Length < 4) continue;
 
             string text = parts[1].Replace("\"\"", "\"").Replace("\\n", "\n").Trim('"');
-            bool isDone = parts[2] == "true";
+            TodoStatus status;
+            if (!Enum.TryParse(parts[2], out status))
+            {
+                status = TodoStatus.NotStarted;
+            }
 
             TodoItem item = new TodoItem(text);
-            if (isDone) item.MarkDone();
+            item.SetStatus(status);
             todoList.Add(item);
         }
 
