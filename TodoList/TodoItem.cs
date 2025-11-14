@@ -65,7 +65,7 @@ public class TodoItem
 
         return task;
     }
-    private string GetStatusText(TodoStatus status)
+    public static string GetStatusText(TodoStatus status)
     {
         return status switch
         {
@@ -73,7 +73,8 @@ public class TodoItem
             TodoStatus.InProgress => "в процессе",
             TodoStatus.Completed => "выполнено",
             TodoStatus.Postponed => "отложено",
-            TodoStatus.Failed => "провалено"
+            TodoStatus.Failed => "провалено",
+            _ => "неизвестно"
         };
     }
 }

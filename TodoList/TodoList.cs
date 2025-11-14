@@ -1,4 +1,6 @@
-﻿namespace TodoList;
+﻿using static TodoList.TodoItem;
+
+namespace TodoList;
 public class TodoList
 {
     private List<TodoItem> items;
@@ -7,7 +9,6 @@ public class TodoList
     public TodoList()
     {
         items = new List<TodoItem>();
-        count = 0;
     }
 
     public void Add(TodoItem item)
@@ -17,7 +18,7 @@ public class TodoList
 
     public void Delete(int index)
     {
-        if (index < 0 || index >= count)
+        if (index < 0 || index >= items.Count)
             throw new ArgumentOutOfRangeException(nameof(index));
 
 
@@ -26,7 +27,7 @@ public class TodoList
 
     public TodoItem GetItem(int index)
     {
-        if (index < 0 || index >= count)
+        if (index < 0 || index >= items.Count)
             throw new ArgumentOutOfRangeException(nameof(index));
 
         return items[index];
@@ -48,13 +49,10 @@ public class TodoList
             yield return item;
         }
     }
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     public void View(bool showIndex, bool showStatus, bool showDate)
     {
-        if (count == 0)
+        if (items.Count == 0)
         {
             Console.WriteLine("\nЗадач нет");
             return;
@@ -90,7 +88,7 @@ public class TodoList
 
             if (showStatus)
             {
-                string status = item.Status ? "выполнено" : "не выполнено";
+                string status = GetStatusText(item.Status);
                 line += status.PadRight(statusWidth) + " ";
             }
 
@@ -116,4 +114,10 @@ public class TodoList
 
         return task;
     }
+
+    private string GetStatusText(TodoStatus status)
+    {
+        return TodoItem.GetStatusText(status);
+    }
+
 }
