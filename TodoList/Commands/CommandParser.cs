@@ -27,6 +27,9 @@ public static class CommandParser
             case "view":
                 return ParseViewCommand(argument, todolist);
 
+            case "status":
+                return ParseStatusCommand(argument, todolist);
+
             case "delete":
                 return ParseDeleteCommand(argument, todolist);
 

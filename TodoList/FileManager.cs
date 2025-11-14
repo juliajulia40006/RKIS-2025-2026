@@ -35,7 +35,7 @@ public static class FileManager
     public static void SaveTodos(TodoList todos, string filePath)
     {
         string[] lines = new string[todos.Count + 1];
-        lines[0] = "Index;Text;IsDone;LastUpdate";
+        lines[0] = "Index;Text;Status;LastUpdate";
 
         for (int i = 0; i < todos.Count; i++)
         {
@@ -57,7 +57,7 @@ public static class FileManager
         {
             if (string.IsNullOrWhiteSpace(lines[i])) continue;
 
-            string[] parts = lines[i].Split(';');
+            string[] parts = ParseCsvLine(lines[i]);
             if (parts.Length < 4) continue;
 
             string text = parts[1].Replace("\"\"", "\"").Replace("\\n", "\n").Trim('"');

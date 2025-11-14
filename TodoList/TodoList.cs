@@ -1,4 +1,6 @@
-﻿using static TodoList.TodoItem;
+﻿using System.Collections;
+using System.Collections.Generic;
+using static TodoList.TodoItem;
 
 namespace TodoList;
 public class TodoList
@@ -48,6 +50,10 @@ public class TodoList
         {
             yield return item;
         }
+    }
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 
     public void View(bool showIndex, bool showStatus, bool showDate)
