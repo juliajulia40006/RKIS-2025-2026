@@ -20,12 +20,6 @@ public class TodoItem
         Status = TodoStatus.NotStarted;
         LastUpdate = DateTime.Now;
     }
-
-    public void MarkDone()
-    {
-        Status = TodoStatus.Completed;
-        LastUpdate = DateTime.Now;
-    }
     public void SetStatus(TodoStatus status)
     {
         Status = status;
@@ -76,5 +70,15 @@ public class TodoItem
             TodoStatus.Failed => "провалено",
             _ => "неизвестно"
         };
+    }
+    public void SetLastUpdate(DateTime dateTime)
+    {
+        LastUpdate = dateTime;
+    }
+    public TodoItem(string text, DateTime? lastUpdate = null)
+    {
+        Text = text;
+        Status = TodoStatus.NotStarted;
+        LastUpdate = lastUpdate ?? DateTime.Now;
     }
 }

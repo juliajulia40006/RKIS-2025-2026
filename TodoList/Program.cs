@@ -3,7 +3,6 @@ using TodoList.Commands;
 using TodoList;
 using MainTodoList=TodoList.TodoList;
 using System.IO;
-using System.Collections;
 
 class Program
 {

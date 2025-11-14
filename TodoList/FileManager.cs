@@ -67,8 +67,16 @@ public static class FileManager
                 status = TodoStatus.NotStarted;
             }
 
+            DateTime lastUpdate;
+            if (!DateTime.TryParse(parts[3], out lastUpdate))
+            {
+                lastUpdate = DateTime.Now;
+            }
+
             TodoItem item = new TodoItem(text);
             item.SetStatus(status);
+            item.SetLastUpdate(lastUpdate);
+
             todoList.Add(item);
         }
 

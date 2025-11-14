@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using static TodoList.TodoItem;
 
 namespace TodoList;
-public class TodoList
+public class TodoList : IEnumerable<TodoItem>
 {
     private List<TodoItem> items;
     public int Count => items.Count;
