@@ -62,10 +62,15 @@ public static class FileManager
 
             string text = parts[1].Replace("\"\"", "\"").Replace("\\n", "\n").Trim('"');
             TodoStatus status;
-            if (!Enum.TryParse(parts[2], out status))
+            try
+            {
+                status = Enum.Parse<TodoStatus>(parts[2]);
+            }
+            catch (ArgumentException)
             {
                 status = TodoStatus.NotStarted;
             }
+
 
             DateTime lastUpdate;
             if (!DateTime.TryParse(parts[3], out lastUpdate))

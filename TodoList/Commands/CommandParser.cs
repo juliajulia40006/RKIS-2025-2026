@@ -131,8 +131,8 @@ public static class CommandParser
 
         if (int.TryParse(parts[0], out int taskIndex))
         {
-            string statusStr = parts[1].ToLower();
-            TodoStatus status = ParseStatus(statusStr);
+            string statusStr = parts[1];
+            TodoStatus status = Enum.Parse<TodoStatus>(statusStr, true);
 
             if (status == TodoStatus.NotStarted && statusStr != "notstarted")
             {
@@ -150,18 +150,6 @@ public static class CommandParser
 
         Console.WriteLine("Ошибка: Используйте: status <номер> <статус>");
         return new StatusCommand { TodoList = todolist };
-    }
-    private static TodoStatus ParseStatus(string statusStr)
-    {
-        return statusStr.ToLower() switch
-        {
-            "notstarted" => TodoStatus.NotStarted,
-            "inprogress" or "improgress" => TodoStatus.InProgress, // обработка опечатки
-            "completed" => TodoStatus.Completed,
-            "postponed" => TodoStatus.Postponed,
-            "failed" => TodoStatus.Failed,
-            _ => TodoStatus.NotStarted
-        };
     }
 
     private static ICommand ParseDeleteCommand(string argument, TodoList todolist)
