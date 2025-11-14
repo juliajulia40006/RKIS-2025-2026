@@ -27,9 +27,6 @@ public static class CommandParser
             case "view":
                 return ParseViewCommand(argument, todolist);
 
-            case "done":
-                return ParseDoneCommand(argument, todolist);
-
             case "delete":
                 return ParseDeleteCommand(argument, todolist);
 
@@ -162,15 +159,6 @@ public static class CommandParser
             "failed" => TodoStatus.Failed,
             _ => TodoStatus.NotStarted
         };
-    }
-
-    private static ICommand ParseDoneCommand(string argument, TodoList todolist)
-    {
-        if (int.TryParse(argument, out int taskIndex))
-        {
-            return new DoneCommand { TodoList = todolist, TaskIndex = taskIndex };
-        }
-        return new DoneCommand { TodoList = todolist };
     }
 
     private static ICommand ParseDeleteCommand(string argument, TodoList todolist)
