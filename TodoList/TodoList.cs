@@ -48,7 +48,10 @@ public class TodoList
             yield return item;
         }
     }
-
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
     public void View(bool showIndex, bool showStatus, bool showDate)
     {
         if (count == 0)
