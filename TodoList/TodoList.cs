@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using static TodoList.TodoItem;
 
 namespace TodoList;
@@ -127,11 +126,6 @@ public class TodoList : IEnumerable<TodoItem>
             throw new ArgumentOutOfRangeException(nameof(index));
 
         items[index].SetStatus(status);
-    }
-
-    private string GetStatusText(TodoStatus status)
-    {
-        return TodoItem.GetStatusText(status);
     }
 
 }
