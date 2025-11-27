@@ -13,7 +13,7 @@ public class StatusCommand : ICommand
         if (TaskIndex >= 1 && TaskIndex <= TodoList.Count)
         {
             int index = TaskIndex - 1;
-            TodoItem item = TodoList.GetItem(index);
+            TodoItem item = TodoList[index];
             item.SetStatus(Status);
             string statusText = GetStatusText(Status);
             Console.WriteLine($"Задача '{item.Text}' отмечена как '{statusText}'!");

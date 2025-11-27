@@ -78,4 +78,8 @@ Lesson 9:
 +в CommandParser добавлен ParseStatusCommand
 -удалено поле isDone, а так же всё, что было с ним связано.
 -Удалён метод IncreaseArray
+
+edits for L9:
++enum перенесён за пределы класса в TodoItem
+-удалён getitem
 */

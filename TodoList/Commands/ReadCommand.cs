@@ -10,7 +10,7 @@ public class ReadCommand : ICommand
         if (TaskIndex >= 1 && TaskIndex <= TodoList.Count)
         {
             int index = TaskIndex - 1;
-            TodoItem item = TodoList.GetItem(index);
+            TodoItem item = TodoList[index];
             Console.WriteLine($"Задача #{TaskIndex}:");
             Console.WriteLine(item.GetFullInfo());
         }

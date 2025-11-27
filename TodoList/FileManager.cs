@@ -1,4 +1,5 @@
-﻿using static TodoList.TodoItem;
+﻿using System;
+using static TodoList.TodoItem;
 
 namespace TodoList;
 
@@ -39,7 +40,7 @@ public static class FileManager
 
         for (int i = 0; i < todos.Count; i++)
         {
-            TodoItem item = todos.GetItem(i);
+            TodoItem item = todos[i];
             lines[i + 1] = $"{i};\"{item.Text.Replace("\"", "\"\"").Replace("\n", "\\n")}\";{item.Status};{item.LastUpdate:yyyy-MM-ddTHH:mm:ss}";
         }
 
@@ -61,7 +62,7 @@ public static class FileManager
             if (parts.Length < 4) continue;
 
             string text = parts[1].Replace("\"\"", "\"").Replace("\\n", "\n").Trim('"');
-            TodoStatus status;
+            TodoStatus status;	
             try
             {
                 status = Enum.Parse<TodoStatus>(parts[2]);

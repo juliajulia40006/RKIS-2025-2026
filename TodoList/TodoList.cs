@@ -26,14 +26,6 @@ public class TodoList : IEnumerable<TodoItem>
         items.RemoveAt(index);
     }
 
-    public TodoItem GetItem(int index)
-    {
-        if (index < 0 || index >= items.Count)
-            throw new ArgumentOutOfRangeException(nameof(index));
-
-        return items[index];
-    }
-
     public TodoItem this[int index]
     {
         get

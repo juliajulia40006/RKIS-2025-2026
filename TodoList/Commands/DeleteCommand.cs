@@ -9,7 +9,7 @@ public class DeleteCommand : ICommand
         if (TaskIndex >= 1 && TaskIndex <= TodoList.Count)
         {
             int index = TaskIndex - 1;
-            TodoItem item = TodoList.GetItem(index);
+            TodoItem item = TodoList[index];
             string deletedTask = item.Text;
 
             TodoList.Delete(index);

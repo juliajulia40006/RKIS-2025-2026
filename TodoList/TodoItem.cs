@@ -1,14 +1,14 @@
 ﻿namespace TodoList;
+public enum TodoStatus
+{
+	NotStarted,
+	InProgress,
+	Completed,
+	Postponed,
+	Failed
+}
 public class TodoItem
 {
-    public enum TodoStatus
-    {
-        NotStarted,
-        InProgress,
-        Completed,
-        Postponed,
-        Failed
-    }
 
     public string Text { get; private set; }
     public TodoStatus Status { get; private set; }
