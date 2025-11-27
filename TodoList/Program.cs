@@ -77,10 +77,20 @@ class Program
                 command.Execute();
                 break;
             }
-            command?.Execute();
 
-            FileManager.SaveProfile(userProfile, profileFilePath);
-            FileManager.SaveTodos(todoList, todosFilePath);
+			if (command != null)
+			{
+				if (!(command is HelpCommand || command is ViewCommand || command is ReadCommand || command is ProfileCommand))
+					{
+					AppInfo.undoStack.Push(command);
+					AppInfo.redoStack.Clear();
+				}
+			}
+
+            command.Execute();
+
+            FileManager.SaveProfile(AppInfo.CurrentProfile, profileFilePath);
+            FileManager.SaveTodos(AppInfo.Todos, todosFilePath);
         }
     }
 }
