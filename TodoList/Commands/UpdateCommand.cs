@@ -27,4 +27,9 @@ public class UpdateCommand : ICommand
             Console.WriteLine("Ошибка: Используйте: update \"номер\" новый текст");
         }
     }
+
+	public void Unexecute()
+	{
+
+	}
 }

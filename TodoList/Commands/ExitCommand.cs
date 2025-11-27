@@ -7,4 +7,8 @@ public class ExitCommand : ICommand
         Console.WriteLine("Выход...");
         return;
     }
+	public void Unexecute()
+	{
+
+	}
 }

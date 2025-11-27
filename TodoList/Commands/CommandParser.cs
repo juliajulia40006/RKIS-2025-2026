@@ -39,7 +39,12 @@ public static class CommandParser
             case "read":
                 return ParseReadCommand(argument, todolist);
 
-            case "exit":
+			case "undo":
+				return new UndoCommand();
+			case "redo":
+				return new RedoCommand();
+
+			case "exit":
                 return new ExitCommand();
 
             default:

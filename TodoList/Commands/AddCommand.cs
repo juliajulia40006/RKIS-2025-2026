@@ -53,4 +53,12 @@ public class AddCommand : ICommand
             Console.WriteLine($"Добавлено: {TaskText}.");
         }
     }
+
+	public void Unexecute()
+	{
+		if (AppInfo.Todos.Count > 0)
+		{
+			AppInfo.Todos.Delete(AppInfo.Todos.Count - 1);
+		}
+	}
 }

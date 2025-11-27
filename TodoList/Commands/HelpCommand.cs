@@ -15,6 +15,7 @@ public class HelpCommand : ICommand
         update <idx> new text - обновить текст задачи.
         read <idx> - прочитать полный текст задачи.
         exit    - выход.
+
         ---------------------------------------------------------
         Индексы для команды view:
         --index / -i - индекс задачи.
@@ -30,4 +31,9 @@ public class HelpCommand : ICommand
         Failed => провалено.
         """);
     }
+
+	public void Unexecute()
+	{
+
+	}
 }

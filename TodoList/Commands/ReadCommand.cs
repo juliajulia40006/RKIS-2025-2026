@@ -19,4 +19,8 @@ public class ReadCommand : ICommand
             Console.WriteLine("Неверный номер задачи!");
         }
     }
+	public void Unexecute()
+	{
+
+	}
 }

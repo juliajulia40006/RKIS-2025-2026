@@ -9,4 +9,9 @@ public class ProfileCommand : ICommand
     {
         Console.WriteLine($"\n{Profile.GetInfo()}");
     }
+
+	public void Unexecute()
+	{
+	
+	}
 }
