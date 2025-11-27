@@ -83,3 +83,16 @@ edits for L9:
 +enum перенесён за пределы класса в TodoItem
 -удалён getitem
 */
+
+*/
+Lesson 10: 
++добавлен класс appInfo
++добавлены два свойства Todos и CurrentProfile
++созданы стеки undoStack и redoStack
++добавлен метод Unexecute(); в ICommand
++внесены правки в комманды
++добавлено private TodoItem _addedItem; для AddCommand, чтобы многострочная задача возвращалась командой redo
++созданы 2 новые команды: undoCommand и redoCommand
++в commandparser добавлены кейсы undo и redo команд
++добавлены команды undo и redo в helpcommand
+*/
