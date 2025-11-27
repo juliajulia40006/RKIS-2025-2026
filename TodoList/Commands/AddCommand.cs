@@ -4,8 +4,9 @@ public class AddCommand : ICommand
     public bool Multiline { get; set; } = false;
     public string TaskText { get; set; } = "";
     public TodoList TodoList { get; set; }
+	private TodoItem _addedItem;
 
-    public void Execute()
+	public void Execute()
     {
         if (Multiline)
         {
@@ -36,9 +37,9 @@ public class AddCommand : ICommand
                 return;
             }
 
-            TodoItem item = new TodoItem(multilineTask);
-            TodoList.Add(item);
-            Console.WriteLine("Добавлена многострочная задача");
+			_addedItem = new TodoItem(multilineTask);
+			TodoList.Add(_addedItem);
+			Console.WriteLine("Добавлена многострочная задача");
         }
         else
         {
@@ -48,17 +49,32 @@ public class AddCommand : ICommand
                 return;
             }
 
-            TodoItem item = new TodoItem(TaskText);
-            TodoList.Add(item);
-            Console.WriteLine($"Добавлено: {TaskText}.");
+			_addedItem = new TodoItem(TaskText);
+			TodoList.Add(_addedItem);
+			Console.WriteLine($"Добавлено: {TaskText}.");
         }
     }
 
 	public void Unexecute()
 	{
-		if (AppInfo.Todos.Count > 0)
+		if (_addedItem != null && TodoList.Count > 0)
 		{
-			TodoList.Delete(TodoList.Count - 1);
+			int index = TodoList.Count - 1;
+			if (index >= 0 && TodoList[index] == _addedItem)
+			{
+				TodoList.Delete(index);
+			}
+			else
+			{
+				for (int i = 0; i < TodoList.Count; i++)
+				{
+					if (TodoList[i] == _addedItem)
+					{
+						TodoList.Delete(i);
+						break;
+					}
+				}
+			}
 		}
 	}
 }
