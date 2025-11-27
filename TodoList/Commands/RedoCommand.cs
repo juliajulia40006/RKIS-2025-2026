@@ -1,6 +1,5 @@
-﻿using TodoList.Commands;
-
-namespace TodoList;
+﻿
+namespace TodoList.Commands;
 
 public class RedoCommand : ICommand
 {
