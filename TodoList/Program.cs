@@ -14,13 +14,16 @@ class Program
 
     static void Main(string[] args)
     {
-        Console.WriteLine("The program was made by Deinega and Piyagova");
+
+		Console.WriteLine("The program was made by Deinega and Piyagova");
 
         FileManager.EnsureDataDirectory(dataDirectory);
-
         userProfile = FileManager.LoadProfile(profileFilePath);
+		todoList = FileManager.LoadTodos(todosFilePath);
+		AppInfo.Todos = todoList;
+		AppInfo.CurrentProfile = userProfile;
 
-        if (userProfile == null)
+		if (userProfile == null)
         {
 
             Console.WriteLine("Tell me your name:");
@@ -37,8 +40,10 @@ class Program
             }
 
             userProfile = new Profile(firstName, surname, birthYear);
-            todoList = new MainTodoList();
-            FileManager.SaveProfile(userProfile, profileFilePath);
+			todoList = new MainTodoList();
+			AppInfo.Todos = todoList;
+			AppInfo.CurrentProfile = userProfile;
+			FileManager.SaveProfile(userProfile, profileFilePath);
 
             Console.WriteLine($"New user Added: {userProfile.GetInfo()}");
         }
@@ -46,10 +51,8 @@ class Program
         {
             Console.WriteLine($"Welcome back, {userProfile.GetInfo()}");
         }
-        
-        todoList = FileManager.LoadTodos(todosFilePath);
 
-        if (todoList.Count > 0)
+		if (todoList.Count > 0)
         {
             Console.WriteLine($"\nЗагружено {todoList.Count} задач из сохранения.");
         }
@@ -80,16 +83,24 @@ class Program
 
 			if (command != null)
 			{
-				if (!(command is HelpCommand || command is ViewCommand || command is ReadCommand || command is ProfileCommand))
-					{
+				if (command is UndoCommand || command is RedoCommand)
+				{
+					command.Execute();
+				}
+				else if (command is HelpCommand || command is ViewCommand ||
+						 command is ReadCommand || command is ProfileCommand)
+				{
+					command.Execute();
+				}
+				else
+				{
+					command.Execute();
 					AppInfo.undoStack.Push(command);
 					AppInfo.redoStack.Clear();
 				}
 			}
 
-            command.Execute();
-
-            FileManager.SaveProfile(AppInfo.CurrentProfile, profileFilePath);
+			FileManager.SaveProfile(AppInfo.CurrentProfile, profileFilePath);
             FileManager.SaveTodos(AppInfo.Todos, todosFilePath);
         }
     }

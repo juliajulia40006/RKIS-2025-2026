@@ -10,11 +10,10 @@ public class DeleteCommand : ICommand
 	{
 		if (TaskIndex >= 1 && TaskIndex <= TodoList.Count)
 		{
-			int index = TaskIndex - 1;
-			TodoItem item = TodoList[index];
-			string deletedTask = item.Text;
-
-			TodoList.Delete(index);
+			deletedIndex = TaskIndex - 1;
+			deletedItem = TodoList[deletedIndex];
+			string deletedTask = deletedItem.Text;
+			TodoList.Delete(deletedIndex);
 			Console.WriteLine($"Задача '{deletedTask}' удалена.");
 		}
 		else
@@ -27,7 +26,7 @@ public class DeleteCommand : ICommand
 	{
 		if (deletedItem != null)
 		{
-			AppInfo.Todos.Add(deletedItem);
+			TodoList.Add(deletedItem);
 		}
 	}
 }

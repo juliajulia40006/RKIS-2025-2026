@@ -14,9 +14,10 @@ public class StatusCommand : ICommand
         if (TaskIndex >= 1 && TaskIndex <= TodoList.Count)
         {
             int index = TaskIndex - 1;
-            var item = TodoList[index];
+			var item = TodoList[index];
 			previousStatus = item.Status;
-            item.SetStatus(Status);
+			itemIndex = index;
+			item.SetStatus(Status);
             string statusText = GetStatusText(Status);
             Console.WriteLine($"Задача '{item.Text}' отмечена как '{statusText}'!");
         }
@@ -28,9 +29,9 @@ public class StatusCommand : ICommand
 
 	public void Unexecute()
 	{
-		if (itemIndex >= 0 && itemIndex < AppInfo.Todos.Count)
+		if (itemIndex >= 0 && itemIndex < TodoList.Count)
 		{
-			var item = AppInfo.Todos[itemIndex];
+			var item = TodoList[itemIndex];
 			item.SetStatus(previousStatus);
 		}
 	}

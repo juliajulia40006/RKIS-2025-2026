@@ -58,7 +58,7 @@ public class AddCommand : ICommand
 	{
 		if (AppInfo.Todos.Count > 0)
 		{
-			AppInfo.Todos.Delete(AppInfo.Todos.Count - 1);
+			TodoList.Delete(TodoList.Count - 1);
 		}
 	}
 }

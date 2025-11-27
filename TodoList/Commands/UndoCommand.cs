@@ -1,6 +1,6 @@
 ﻿
 namespace TodoList.Commands;
-public class UndoCommand
+public class UndoCommand:ICommand
 {
 	public void Execute()
 	{

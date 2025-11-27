@@ -4,23 +4,26 @@ public class UpdateCommand : ICommand
     public int TaskIndex { get; set; }
     public string NewText { get; set; } = "";
     public TodoList TodoList { get; set; }
+	private int itemIndex;
+	private string oldText;
 
-    public void Execute()
+	public void Execute()
     {
         if (TaskIndex >= 1 && TaskIndex <= TodoList.Count)
         {
             int index = TaskIndex - 1;
             TodoItem item = TodoList[index];
-            string oldTask = item.Text;
+            oldText = item.Text;
+			itemIndex = index;
 
-            if (string.IsNullOrEmpty(NewText))
+			if (string.IsNullOrEmpty(NewText))
             {
                 Console.WriteLine("Ошибка: Новый текст задачи не может быть пустым");
                 return;
             }
 
             item.UpdateText(NewText);
-            Console.WriteLine($"Задача обновлена: '{oldTask}' -> '{NewText}'");
+            Console.WriteLine($"Задача обновлена: '{oldText}' -> '{NewText}'");
         }
         else
         {
@@ -30,6 +33,10 @@ public class UpdateCommand : ICommand
 
 	public void Unexecute()
 	{
-
+		if (itemIndex >= 0 && itemIndex < TodoList.Count && oldText != null)
+		{
+			TodoItem item = TodoList[itemIndex];
+			item.UpdateText(oldText);
+		}
 	}
 }
