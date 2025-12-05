@@ -111,7 +111,61 @@ public static class FileManager
         return todoList;
     }
 
-    private static string[] ParseCsvLine(string line)
+	public static void SaveUserTodos(Guid userId, List<TodoItem> todos, string filePath)
+	{
+		var lines = new List<string> { "Index;Text;Status;LastUpdate" };
+
+		for (int i = 0; i < todos.Count; i++)
+		{
+			TodoItem item = todos[i];
+			lines.Add($"{i};\"{item.Text.Replace("\"", "\"\"").Replace("\n", "\\n")}\";{item.Status};{item.LastUpdate:yyyy-MM-ddTHH:mm:ss}");
+		}
+
+		File.WriteAllLines(filePath, lines);
+	}
+
+	public static List<TodoItem> LoadUserTodos(string filePath)
+	{
+		List<TodoItem> todoList = new List<TodoItem>();
+		if (!File.Exists(filePath)) return todoList;
+
+		string[] lines = File.ReadAllLines(filePath);
+
+		for (int i = 1; i < lines.Length; i++)
+		{
+			if (string.IsNullOrWhiteSpace(lines[i])) continue;
+
+			string[] parts = ParseCsvLine(lines[i]);
+			if (parts.Length < 4) continue;
+
+			string text = parts[1].Replace("\"\"", "\"").Replace("\\n", "\n").Trim('"');
+			TodoStatus status;
+			try
+			{
+				status = Enum.Parse<TodoStatus>(parts[2]);
+			}
+			catch (ArgumentException)
+			{
+				status = TodoStatus.NotStarted;
+			}
+
+			DateTime lastUpdate;
+			if (!DateTime.TryParse(parts[3], out lastUpdate))
+			{
+				lastUpdate = DateTime.Now;
+			}
+
+			TodoItem item = new TodoItem(text);
+			item.SetStatus(status);
+			item.SetLastUpdate(lastUpdate);
+
+			todoList.Add(item);
+		}
+
+		return todoList;
+	}
+
+	private static string[] ParseCsvLine(string line)
     {
         int fieldCount = CountFields(line);
         string[] result = new string[fieldCount];
