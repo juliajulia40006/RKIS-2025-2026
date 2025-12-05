@@ -13,26 +13,6 @@ public static class FileManager
         }
     }
 
-    public static void SaveProfile(Profile profile, string filePath)
-    {
-        string[] lines = {
-        profile.FirstName,
-        profile.LastName,
-        profile.BirthYear.ToString()
-        };
-        File.WriteAllLines(filePath, lines);
-    }
-
-    public static Profile LoadProfile(string filePath)
-    {
-        if (!File.Exists(filePath)) return null;
-
-        string[] lines = File.ReadAllLines(filePath);
-        if (lines.Length < 3) return null;
-
-        return new Profile(lines[0], lines[1], int.Parse(lines[2]));
-    }
-
     public static void SaveTodos(TodoList todos, string filePath)
     {
         string[] lines = new string[todos.Count + 1];
