@@ -13,27 +13,55 @@ public static class FileManager
         }
     }
 
-    public static void SaveProfile(Profile profile, string filePath)
-    {
-        string[] lines = {
-        profile.FirstName,
-        profile.LastName,
-        profile.BirthYear.ToString()
-        };
-        File.WriteAllLines(filePath, lines);
-    }
+	public static void SaveProfiles(Profiles profiles, string filePath)
+	{
+		var lines = new List<string> { "Id;Login;Password;FirstName;LastName;BirthYear" };
 
-    public static Profile LoadProfile(string filePath)
-    {
-        if (!File.Exists(filePath)) return null;
+		foreach (var profile in profiles.GetAll())
+		{
+			string line = $"{profile.Id};{profile.Login};{profile.Password};{profile.FirstName};{profile.LastName};{profile.BirthYear}";
+			lines.Add(line);
+		}
 
-        string[] lines = File.ReadAllLines(filePath);
-        if (lines.Length < 3) return null;
+		File.WriteAllLines(filePath, lines);
+	}
 
-        return new Profile(lines[0], lines[1], int.Parse(lines[2]));
-    }
+	public static Profiles LoadProfiles(string filePath)
+	{
+		Profiles profiles = new Profiles();
 
-    public static void SaveTodos(TodoList todos, string filePath)
+		if (!File.Exists(filePath)) return profiles;
+
+		string[] lines = File.ReadAllLines(filePath);
+
+		for (int i = 1; i < lines.Length; i++)
+		{
+			if (string.IsNullOrWhiteSpace(lines[i])) continue;
+
+			string[] parts = lines[i].Split(';');
+			if (parts.Length < 6) continue;
+
+			try
+			{
+				Guid id = Guid.Parse(parts[0]);
+				string login = parts[1];
+				string password = parts[2];
+				string firstName = parts[3];
+				string lastName = parts[4];
+				int birthYear = int.Parse(parts[5]);
+
+				profiles.Add(new Profile(id, login, password, firstName, lastName, birthYear));
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Ошибка при загрузке профиля: {ex.Message}");
+			}
+		}
+
+		return profiles;
+	}
+
+	public static void SaveTodos(TodoList todos, string filePath)
     {
         string[] lines = new string[todos.Count + 1];
         lines[0] = "Index;Text;Status;LastUpdate";

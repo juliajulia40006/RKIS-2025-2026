@@ -8,8 +8,8 @@ public class Profile
     public string LastName { get; private set; }
     public int BirthYear { get; private set; }
 
-    public Profile(Guid id, string login, string password, string firstName, string lastName, int birthYear)
-    {
+	public Profile(Guid id, string login, string password, string firstName, string lastName, int birthYear)
+	{
 		Id = id;
 		Login = login;
 		Password = password;
