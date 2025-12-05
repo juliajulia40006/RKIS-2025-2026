@@ -12,8 +12,50 @@ public static class FileManager
             Directory.CreateDirectory(dirPath);
         }
     }
+	public static void SaveProfiles(string filePath)
+	{
+		var lines = new List<string> { "Id;Login;Password;FirstName;LastName;BirthYear" };
 
-    public static void SaveTodos(TodoList todos, string filePath)
+		foreach (var profile in AppInfo.Profiles)
+		{
+			string line = $"{profile.Id};{profile.Login};{profile.Password};{profile.FirstName};{profile.LastName};{profile.BirthYear}";
+			lines.Add(line);
+		}
+
+		File.WriteAllLines(filePath, lines);
+	}
+
+	public static void LoadProfiles(string filePath)
+	{
+		if (!File.Exists(filePath)) return;
+
+		string[] lines = File.ReadAllLines(filePath);
+
+		for (int i = 1; i < lines.Length; i++)
+		{
+			if (string.IsNullOrWhiteSpace(lines[i])) continue;
+
+			string[] parts = lines[i].Split(';');
+			if (parts.Length < 6) continue;
+
+			try
+			{
+				Guid id = Guid.Parse(parts[0]);
+				string login = parts[1];
+				string password = parts[2];
+				string firstName = parts[3];
+				string lastName = parts[4];
+				int birthYear = int.Parse(parts[5]);
+
+				AppInfo.Profiles.Add(new Profile(id, login, password, firstName, lastName, birthYear));
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Ошибка при загрузке профиля: {ex.Message}");
+			}
+		}
+	}
+	public static void SaveTodos(TodoList todos, string filePath)
     {
         string[] lines = new string[todos.Count + 1];
         lines[0] = "Index;Text;Status;LastUpdate";
