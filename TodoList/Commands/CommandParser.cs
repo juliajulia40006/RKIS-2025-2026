@@ -18,10 +18,10 @@ public static class CommandParser
             case "help":
                 return new HelpCommand();
 
-            case "profile":
-                return new ProfileCommand { Profile = profile };
+			case "profile":
+				return ParseProfileCommand(argument, profile);
 
-            case "add":
+			case "add":
                 return ParseAddCommand(argument, todolist);
 
             case "view":
@@ -52,8 +52,26 @@ public static class CommandParser
                 return null;
         }
     }
+	private static ICommand ParseProfileCommand(string argument, Profile profile)
+	{
+		var command = new ProfileCommand { Profile = profile };
 
-    private static ICommand ParseAddCommand(string argument, TodoList todolist)
+		if (!string.IsNullOrEmpty(argument))
+		{
+			string[] flags = argument.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+			foreach (string flag in flags)
+			{
+				string cleanFlag = flag.Trim().ToLower();
+				if (cleanFlag == "-o" || cleanFlag == "--out")
+				{
+					return new LogoutCommand();
+				}
+			}
+		}
+
+		return command;
+	}
+	private static ICommand ParseAddCommand(string argument, TodoList todolist)
     {
         var command = new AddCommand { TodoList = todolist };
 
