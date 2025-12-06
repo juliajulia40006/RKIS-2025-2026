@@ -5,6 +5,7 @@ public class HelpCommand : ICommand
     public void Execute()
     {
         Console.WriteLine("""
+		profile -o --out - выход из профиля.
 		---------------------------------------------------------
 		help    - список команд.
 		profile - данные пользователя.
