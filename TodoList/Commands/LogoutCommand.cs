@@ -11,7 +11,6 @@ public class LogoutCommand : ICommand
 
 		AppInfo.CurrentProfileId = null;
 		AppInfo.CurrentProfile = null;
-		AppInfo.Todos = null;
 
 		AppInfo.undoStack.Clear();
 		AppInfo.redoStack.Clear();

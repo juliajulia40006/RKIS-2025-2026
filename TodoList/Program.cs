@@ -1,16 +1,10 @@
 ﻿using System;
 using TodoList.Commands;
 using TodoList;
-using MainTodoList=TodoList.TodoList;
 using System.IO;
 
 class Program
 {
-	static Profile userProfile;
-	static MainTodoList todoList;
-	static string dataDirectory = "data";
-	static string profileFilePath = Path.Combine("data", "profile.txt");
-	static string todosFilePath = Path.Combine("data", "todo.csv");
 
 	static void Main(string[] args)
 	{
@@ -97,12 +91,11 @@ class Program
 		{
 			AppInfo.CurrentProfileId = profile.Id;
 			AppInfo.CurrentProfile = profile;
+
 			if (!AppInfo.UserTodos.ContainsKey(profile.Id))
 			{
 				AppInfo.UserTodos[profile.Id] = AppInfo.LoadUserTodos(profile.Id);
 			}
-
-			AppInfo.Todos = AppInfo.UserTodos[profile.Id];
 
 			Console.WriteLine($"Добро пожаловать, {profile.GetInfo()}!");
 			AppInfo.undoStack.Clear();
@@ -148,9 +141,7 @@ class Program
 		AppInfo.Profiles.Add(profile);
 		AppInfo.CurrentProfileId = id;
 		AppInfo.CurrentProfile = profile;
-		AppInfo.UserTodos[id] = new TodoListClass();
-		AppInfo.Todos = AppInfo.UserTodos[id];
-
+		AppInfo.UserTodos[id] = new List<TodoItem>();
 		string profilesFilePath = Path.Combine("data", "profiles.csv");
 		FileManager.SaveProfiles(profilesFilePath);
 

@@ -17,7 +17,7 @@ public class ViewCommand : ICommand
             ShowDate = true;
         }
 
-        TodoList.View(ShowIndex, ShowStatus, ShowDate);
+        TodoList.View(TodoItems, ShowIndex, ShowStatus, ShowDate);
     }
 	public void Unexecute()
 	{
