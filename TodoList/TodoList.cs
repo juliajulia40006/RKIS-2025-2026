@@ -47,7 +47,7 @@ public class TodoList : IEnumerable<TodoItem>
         return GetEnumerator();
     }
 
-    public void View(bool showIndex, bool showStatus, bool showDate)
+    public static void View(List<TodoItem> items, bool showIndex, bool showStatus, bool showDate)
     {
         if (items.Count == 0)
         {
@@ -98,7 +98,7 @@ public class TodoList : IEnumerable<TodoItem>
         }
     }
 
-    private string GetFirstLine(string task)
+    private static string GetFirstLine(string task)
     {
         if (string.IsNullOrEmpty(task))
             return task;
