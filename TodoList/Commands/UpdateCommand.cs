@@ -3,17 +3,19 @@ public class UpdateCommand : ICommand
 {
     public int TaskIndex { get; set; }
     public string NewText { get; set; } = "";
-    public TodoList TodoList { get; set; }
+	public List<TodoItem> TodoItems { get; set; }
+
 	private int itemIndex;
 	private string oldText;
+	private TodoItem updatedItem;
 
 	public void Execute()
     {
-        if (TaskIndex >= 1 && TaskIndex <= TodoList.Count)
-        {
+		if (TodoItems != null && TaskIndex >= 1 && TaskIndex <= TodoItems.Count)
+		{
             int index = TaskIndex - 1;
-            TodoItem item = TodoList[index];
-            oldText = item.Text;
+			updatedItem = TodoItems[index];
+			oldText = updatedItem.Text;
 			itemIndex = index;
 
 			if (string.IsNullOrEmpty(NewText))
@@ -22,7 +24,7 @@ public class UpdateCommand : ICommand
                 return;
             }
 
-            item.UpdateText(NewText);
+            updatedItem.UpdateText(NewText);
             Console.WriteLine($"Задача обновлена: '{oldText}' -> '{NewText}'");
         }
         else
@@ -33,10 +35,9 @@ public class UpdateCommand : ICommand
 
 	public void Unexecute()
 	{
-		if (itemIndex >= 0 && itemIndex < TodoList.Count && oldText != null)
+		if (updatedItem != null && oldText != null)
 		{
-			TodoItem item = TodoList[itemIndex];
-			item.UpdateText(oldText);
+			updatedItem.UpdateText(oldText);
 		}
 	}
 }

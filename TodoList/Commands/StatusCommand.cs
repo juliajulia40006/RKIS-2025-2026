@@ -6,20 +6,22 @@ public class StatusCommand : ICommand
 {
     public int TaskIndex { get; set; }
     public TodoStatus Status { get; set; }
-    public TodoList TodoList { get; set; }
+	public List<TodoItem> TodoItems { get; set; }
+
 	private TodoStatus previousStatus;
 	private int itemIndex;
+	private TodoItem statusItem;
 	public void Execute()
     {
-        if (TaskIndex >= 1 && TaskIndex <= TodoList.Count)
+        if (TaskIndex >= 1 && TaskIndex <= TodoItems.Count)
         {
             int index = TaskIndex - 1;
-			var item = TodoList[index];
+			var item = TodoItems[index];
 			previousStatus = item.Status;
 			itemIndex = index;
 			item.SetStatus(Status);
-            string statusText = GetStatusText(Status);
-            Console.WriteLine($"Задача '{item.Text}' отмечена как '{statusText}'!");
+            string statusText = TodoItem.GetStatusText(Status);
+            Console.WriteLine($"Задача '{statusItem.Text}' отмечена как '{statusText}'!");
         }
         else
         {
@@ -29,9 +31,9 @@ public class StatusCommand : ICommand
 
 	public void Unexecute()
 	{
-		if (itemIndex >= 0 && itemIndex < TodoList.Count)
+		if (itemIndex >= 0 && itemIndex < TodoItems.Count)
 		{
-			var item = TodoList[itemIndex];
+			var item = TodoItems[itemIndex];
 			item.SetStatus(previousStatus);
 		}
 	}

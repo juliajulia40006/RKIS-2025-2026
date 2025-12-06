@@ -2,7 +2,6 @@
 using TodoList.Commands;
 using TodoList;
 using MainTodoList=TodoList.TodoList;
-using TodoListClass = TodoList.TodoList;
 using System.IO;
 
 class Program

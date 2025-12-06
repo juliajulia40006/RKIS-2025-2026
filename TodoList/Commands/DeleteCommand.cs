@@ -2,18 +2,18 @@
 public class DeleteCommand : ICommand
 {
 	public int TaskIndex { get; set; }
-	public TodoList TodoList { get; set; }
+	public List<TodoItem> TodoItems { get; set; }
 	private TodoItem deletedItem;
 	private int deletedIndex;
 
 	public void Execute()
 	{
-		if (TaskIndex >= 1 && TaskIndex <= TodoList.Count)
+		if (TaskIndex >= 1 && TaskIndex <= TodoItems.Count)
 		{
 			deletedIndex = TaskIndex - 1;
-			deletedItem = TodoList[deletedIndex];
+			deletedItem = TodoItems[deletedIndex];
 			string deletedTask = deletedItem.Text;
-			TodoList.Delete(deletedIndex);
+			TodoItems.RemoveAt(deletedIndex);
 			Console.WriteLine($"Задача '{deletedTask}' удалена.");
 		}
 		else
@@ -24,9 +24,16 @@ public class DeleteCommand : ICommand
 
 	public void Unexecute()
 	{
-		if (deletedItem != null)
+		if (deletedItem != null && TodoItems != null)
 		{
-			TodoList.Add(deletedItem);
+			if (deletedIndex >= 0 && deletedIndex <= TodoItems.Count)
+			{
+				TodoItems.Insert(deletedIndex, deletedItem);
+			}
+			else
+			{
+				TodoItems.Add(deletedItem);
+			}
 		}
 	}
 }
