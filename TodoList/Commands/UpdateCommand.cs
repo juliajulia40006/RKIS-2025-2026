@@ -8,6 +8,7 @@ public class UpdateCommand : ICommand
 	private int itemIndex;
 	private string oldText;
 	private TodoItem updatedItem;
+	private TodoList todoList;
 
 	public void Execute()
     {
@@ -24,7 +25,12 @@ public class UpdateCommand : ICommand
                 return;
             }
 
-            updatedItem.UpdateText(NewText);
+			if (todoList == null)
+			{
+				todoList = new TodoList();
+			}
+
+			updatedItem.UpdateText(NewText);
             Console.WriteLine($"Задача обновлена: '{oldText}' -> '{NewText}'");
         }
         else
