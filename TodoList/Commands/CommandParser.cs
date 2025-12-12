@@ -5,7 +5,24 @@ namespace TodoList.Commands;
 
 public static class CommandParser
 {
-    public static ICommand Parse(string inputString, List<TodoItem> todoItems, Profile profile)
+	private static Dictionary<string, Func<string, List<TodoItem>, Profile, ICommand>> _commandHandlers = new();
+
+	static CommandParser()
+	{
+		_commandHandlers["help"] = ParseHelpCommand;
+		_commandHandlers["profile"] = ParseProfileCommand;
+		_commandHandlers["add"] = ParseAddCommand;
+		_commandHandlers["view"] = ParseViewCommand;
+		_commandHandlers["status"] = ParseStatusCommand;
+		_commandHandlers["delete"] = ParseDeleteCommand;
+		_commandHandlers["update"] = ParseUpdateCommand;
+		_commandHandlers["read"] = ParseReadCommand;
+		_commandHandlers["undo"] = ParseUndoCommand;
+		_commandHandlers["redo"] = ParseRedoCommand;
+		_commandHandlers["exit"] = ParseExitCommand;
+	}
+
+	public static ICommand Parse(string inputString, List<TodoItem> todoItems, Profile profile)
 
     {
         if (string.IsNullOrEmpty(inputString))
@@ -15,46 +32,19 @@ public static class CommandParser
         string command = parts[0].ToLower();
         string argument = parts.Length > 1 ? parts[1] : "";
 
-        switch (command)
-        {
-            case "help":
-                return new HelpCommand();
+		if (_commandHandlers.TryGetValue(command, out var handler))
+			return handler(argument, todoItems, profile);
 
-			case "profile":
-				return ParseProfileCommand(argument, profile);
+		Console.WriteLine("Неизвестная команда. Введите 'help' для справки.");
+		return null;
 
-			case "add":
-                return ParseAddCommand(argument, todoItems);
+	}
+	private static ICommand ParseHelpCommand(string argument, List<TodoItem> todoItems, Profile profile)
+	{
+		return new HelpCommand();
+	}
 
-            case "view":
-                return ParseViewCommand(argument, todoItems);
-
-            case "status":
-                return ParseStatusCommand(argument, todoItems);
-
-            case "delete":
-                return ParseDeleteCommand(argument, todoItems);
-
-            case "update":
-                return ParseUpdateCommand(argument, todoItems);
-
-            case "read":
-                return ParseReadCommand(argument, todoItems);
-
-			case "undo":
-				return new UndoCommand();
-			case "redo":
-				return new RedoCommand();
-
-			case "exit":
-                return new ExitCommand();
-
-            default:
-                Console.WriteLine("Неизвестная команда. Введите 'help' для справки.");
-                return null;
-        }
-    }
-	private static ICommand ParseProfileCommand(string argument, Profile profile)
+	private static ICommand ParseProfileCommand(string argument, List<TodoItem> todoItems, Profile profile)
 	{
 		var command = new ProfileCommand { Profile = profile };
 
@@ -73,7 +63,7 @@ public static class CommandParser
 
 		return command;
 	}
-	private static ICommand ParseAddCommand(string argument, List<TodoItem> todoItems)
+	private static ICommand ParseAddCommand(string argument, List<TodoItem> todoItems, Profile profile)
 	{
         var command = new AddCommand { TodoItems = todoItems };
 
@@ -99,7 +89,7 @@ public static class CommandParser
         return command;
     }
 
-    private static ICommand ParseViewCommand(string argument, List<TodoItem> todoItems)
+    private static ICommand ParseViewCommand(string argument, List<TodoItem> todoItems, Profile profile)
 	{
         var command = new ViewCommand { TodoItems = todoItems };
 
@@ -139,7 +129,7 @@ public static class CommandParser
         return command;
     }
 
-    private static ICommand ParseStatusCommand(string argument, List<TodoItem> todoItems)
+    private static ICommand ParseStatusCommand(string argument, List<TodoItem> todoItems, Profile profile)
 	{
         if (string.IsNullOrEmpty(argument))
         {
@@ -177,7 +167,7 @@ public static class CommandParser
         return new StatusCommand { TodoItems = todoItems };
     }
 
-    private static ICommand ParseDeleteCommand(string argument, List<TodoItem> todoItems)
+    private static ICommand ParseDeleteCommand(string argument, List<TodoItem> todoItems, Profile profile)
 	{
         if (int.TryParse(argument, out int taskIndex))
         {
@@ -186,7 +176,7 @@ public static class CommandParser
         return new DeleteCommand { TodoItems = todoItems };
     }
 
-    private static ICommand ParseUpdateCommand (string argument, List<TodoItem> todoItems)
+    private static ICommand ParseUpdateCommand (string argument, List<TodoItem> todoItems, Profile profile)
 	{
         if (string.IsNullOrEmpty(argument))
         {
@@ -218,7 +208,7 @@ public static class CommandParser
         return new UpdateCommand { TodoItems = todoItems };
     }
 
-    private static ICommand ParseReadCommand(string argument, List<TodoItem> todoItems)
+    private static ICommand ParseReadCommand(string argument, List<TodoItem> todoItems, Profile profile)
 {
         if (int.TryParse(argument, out int taskIndex))
         {
@@ -226,4 +216,19 @@ public static class CommandParser
         }
         return new ReadCommand { TodoItems = todoItems };
     }
+
+	private static ICommand ParseUndoCommand(string args, List<TodoItem> todoItems, Profile profile)
+	{
+		return new UndoCommand();
+	}
+
+	private static ICommand ParseRedoCommand(string args, List<TodoItem> todoItems, Profile profile)
+	{
+		return new RedoCommand();
+	}
+
+	private static ICommand ParseExitCommand(string args, List<TodoItem> todoItems, Profile profile)
+	{
+		return new ExitCommand();
+	}
 }
