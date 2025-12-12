@@ -124,5 +124,14 @@ public class TodoList : IEnumerable<TodoItem>
 
         items[index].SetStatus(status);
     }
+	public void Update(int index, string newText)
+	{
+		if (index < 0 || index >= items.Count)
+			throw new ArgumentOutOfRangeException(nameof(index));
+
+		var item = items[index];
+		item.UpdateText(newText);
+		OnTodoUpdated?.Invoke(item);
+	}
 
 }
