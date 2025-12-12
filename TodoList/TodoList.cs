@@ -7,7 +7,12 @@ public class TodoList : IEnumerable<TodoItem>
     private List<TodoItem> items;
     public int Count => items.Count;
 
-    public TodoList()
+	public event Action<TodoItem>? OnTodoAdded;
+	public event Action<TodoItem>? OnTodoDeleted;
+	public event Action<TodoItem>? OnTodoUpdated;
+	public event Action<TodoItem>? OnStatusChanged;
+
+	public TodoList()
     {
         items = new List<TodoItem>();
     }
