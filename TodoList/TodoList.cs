@@ -20,16 +20,18 @@ public class TodoList : IEnumerable<TodoItem>
     public void Add(TodoItem item)
     {
         items.Add(item);
-    }
+		OnTodoAdded?.Invoke(item);
+	}
 
     public void Delete(int index)
     {
         if (index < 0 || index >= items.Count)
             throw new ArgumentOutOfRangeException(nameof(index));
 
-
-        items.RemoveAt(index);
-    }
+		var deletedItem = items[index];
+		items.RemoveAt(index);
+		OnTodoDeleted?.Invoke(deletedItem);
+	}
 
     public TodoItem this[int index]
     {
@@ -123,7 +125,8 @@ public class TodoList : IEnumerable<TodoItem>
             throw new ArgumentOutOfRangeException(nameof(index));
 
         items[index].SetStatus(status);
-    }
+		OnStatusChanged?.Invoke(items[index]);
+	}
 	public void Update(int index, string newText)
 	{
 		if (index < 0 || index >= items.Count)

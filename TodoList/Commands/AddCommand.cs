@@ -63,7 +63,7 @@ public class AddCommand : ICommand
 			int index = TodoItems.Count - 1;
 			if (index >= 0 && TodoItems[index] == _addedItem)
 			{
-				TodoItems.RemoveAt(index); // Изменено с Delete на RemoveAt
+				TodoItems.RemoveAt(index);
 			}
 			else
 			{
@@ -71,7 +71,7 @@ public class AddCommand : ICommand
 				{
 					if (TodoItems[i] == _addedItem)
 					{
-						TodoItems.RemoveAt(i); // Изменено с Delete на RemoveAt
+						TodoItems.RemoveAt(i);
 						break;
 					}
 				}
