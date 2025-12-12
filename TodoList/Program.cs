@@ -78,6 +78,7 @@ class Program
 
 	private static void InitializeTodoList()
 	{
+		if (!AppInfo.CurrentProfileId.HasValue) return;
 		currentTodoList = new TodoList.TodoList();
 
 		currentTodoList.OnTodoAdded += FileManager.SaveTodoList;

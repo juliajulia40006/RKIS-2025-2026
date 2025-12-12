@@ -4,6 +4,7 @@ public class AddCommand : ICommand
     public bool Multiline { get; set; } = false;
     public string TaskText { get; set; } = "";
 	public List<TodoItem> TodoItems { get; set; }
+	public TodoList? TodoList { get; set; }
 
 	private TodoItem _addedItem;
 
@@ -40,6 +41,10 @@ public class AddCommand : ICommand
 
 			_addedItem = new TodoItem(multilineTask);
 			TodoItems.Add(_addedItem);
+			if (TodoList != null)
+			{
+				int index = TodoItems.Count - 1;
+			}
 			Console.WriteLine("Добавлена многострочная задача");
         }
         else
