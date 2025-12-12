@@ -55,6 +55,14 @@ public static class FileManager
 			}
 		}
 	}
+	public static void SaveTodoList(TodoItem item)
+	{
+		if (AppInfo.CurrentProfileId.HasValue)
+		{
+			AppInfo.SaveUserTodos(AppInfo.CurrentProfileId.Value);
+		}
+	}
+
 	public static void SaveTodos(TodoList todos, string filePath)
     {
         string[] lines = new string[todos.Count + 1];
