@@ -5,6 +5,7 @@ using System.IO;
 
 class Program
 {
+	private static TodoList.TodoList currentTodoList;
 
 	static void Main(string[] args)
 	{
@@ -32,6 +33,9 @@ class Program
 			Console.WriteLine("Неверный выбор.");
 			return;
 		}
+
+		InitializeTodoList();
+
 		while (true)
 		{
 			Console.Write("\nВведите команду (help - список команд): ");
@@ -67,14 +71,23 @@ class Program
 					command.Execute();
 					AppInfo.undoStack.Push(command);
 					AppInfo.redoStack.Clear();
-					if (AppInfo.CurrentProfileId.HasValue)
-					{
-						AppInfo.SaveUserTodos(AppInfo.CurrentProfileId.Value);
-					}
 				}
 			}
 		}
 	}
+
+	private static void InitializeTodoList()
+	{
+		currentTodoList = new TodoList.TodoList();
+
+		currentTodoList.OnTodoAdded += FileManager.SaveTodoList;
+		currentTodoList.OnTodoDeleted += FileManager.SaveTodoList;
+		currentTodoList.OnTodoUpdated += FileManager.SaveTodoList;
+		currentTodoList.OnStatusChanged += FileManager.SaveTodoList;
+
+		var currentTodos = AppInfo.GetCurrentTodos();
+	}
+
 	private static bool LoginUser()
 	{
 		Console.Write("Логин: ");
@@ -101,6 +114,7 @@ class Program
 			AppInfo.undoStack.Clear();
 			AppInfo.redoStack.Clear();
 
+			InitializeTodoList();
 			return true;
 		}
 
@@ -147,6 +161,7 @@ class Program
 
 		Console.WriteLine($"Профиль создан! Добро пожаловать, {profile.GetInfo()}!");
 
+		InitializeTodoList();
 		return true;
 	}
 
