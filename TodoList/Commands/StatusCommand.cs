@@ -17,6 +17,8 @@ public class StatusCommand : ICommand
         {
             int index = TaskIndex - 1;
 			var item = TodoItems[index];
+
+			statusItem = item;
 			previousStatus = item.Status;
 			itemIndex = index;
 			item.SetStatus(Status);

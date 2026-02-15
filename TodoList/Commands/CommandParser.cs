@@ -1,5 +1,6 @@
 ﻿using TodoList;
 using static TodoList.TodoItem;
+using TodoList.Commands;
 
 namespace TodoList.Commands;
 
@@ -251,7 +252,6 @@ public static class CommandParser
 				case "--contains":
 					if (i + 1 < parts.Length)
 					{
-						// Просто берем следующий элемент как текст
 						command.ContainsText = parts[++i];
 					}
 					break;
