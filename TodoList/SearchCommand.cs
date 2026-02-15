@@ -13,6 +13,7 @@ public class SearchCommand : ICommand
 	public DateTime? ToDate { get; set; }
 	public TodoStatus? Status { get; set; }
 	public string? SortBy { get; set; }
+	public string? ThenBy { get; set; }
 	public bool SortDesc { get; set; }
 	public int? Top { get; set; }
 
@@ -51,6 +52,24 @@ public class SearchCommand : ICommand
 				query = SortDesc
 					? query.OrderByDescending(item => item.LastUpdate)
 					: query.OrderBy(item => item.LastUpdate);
+			}
+
+			if (!string.IsNullOrEmpty(ThenBy))
+			{
+				var ordered = (IOrderedEnumerable<TodoItem>)query;
+
+				if (ThenBy == "text" && SortBy != "text")
+				{
+					query = SortDesc
+						? ordered.ThenByDescending(item => item.Text)
+						: ordered.ThenBy(item => item.Text);
+				}
+				else if (ThenBy == "date" && SortBy != "date")
+				{
+					query = SortDesc
+						? ordered.ThenByDescending(item => item.LastUpdate)
+						: ordered.ThenBy(item => item.LastUpdate);
+				}
 			}
 		}
 
