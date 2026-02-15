@@ -20,6 +20,7 @@ public static class CommandParser
 		_commandHandlers["undo"] = ParseUndoCommand;
 		_commandHandlers["redo"] = ParseRedoCommand;
 		_commandHandlers["exit"] = ParseExitCommand;
+		_commandHandlers["search"] = ParseSearchCommand;
 	}
 
 	public static ICommand Parse(string inputString, List<TodoItem> todoItems, Profile profile)
@@ -230,5 +231,108 @@ public static class CommandParser
 	private static ICommand ParseExitCommand(string args, List<TodoItem> todoItems, Profile profile)
 	{
 		return new ExitCommand();
+	}
+
+	private static ICommand ParseSearchCommand(string argument, List<TodoItem> todoItems, Profile profile)
+	{
+		var command = new SearchCommand { TodoItems = todoItems };
+
+		if (string.IsNullOrEmpty(argument))
+			return command;
+
+		string[] parts = argument.Split(' ');
+
+		for (int i = 0; i < parts.Length; i++)
+		{
+			string flag = parts[i].ToLower();
+
+			switch (flag)
+			{
+				case "--contains":
+					if (i + 1 < parts.Length)
+					{
+						// Просто берем следующий элемент как текст
+						command.ContainsText = parts[++i];
+					}
+					break;
+
+				case "--starts-with":
+					if (i + 1 < parts.Length)
+						command.StartsWithText = parts[++i];
+					break;
+
+				case "--ends-with":
+					if (i + 1 < parts.Length)
+						command.EndsWithText = parts[++i];
+					break;
+
+				case "--from":
+					if (i + 1 < parts.Length)
+					{
+						if (DateTime.TryParse(parts[i + 1], out DateTime fromDate))
+							command.FromDate = fromDate;
+						else
+							Console.WriteLine($"Ошибка: Неверный формат даты '{parts[i + 1]}'");
+						i++;
+					}
+					break;
+
+				case "--to":
+					if (i + 1 < parts.Length)
+					{
+						if (DateTime.TryParse(parts[i + 1], out DateTime toDate))
+							command.ToDate = toDate;
+						else
+							Console.WriteLine($"Ошибка: Неверный формат даты '{parts[i + 1]}'");
+						i++;
+					}
+					break;
+
+				case "--status":
+					if (i + 1 < parts.Length)
+					{
+						if (Enum.TryParse<TodoStatus>(parts[i + 1], true, out TodoStatus status))
+							command.Status = status;
+						else
+							Console.WriteLine($"Ошибка: Неверный статус '{parts[i + 1]}'");
+						i++;
+					}
+					break;
+
+				case "--sort":
+					if (i + 1 < parts.Length)
+					{
+						string sortValue = parts[i + 1].ToLower();
+						if (sortValue == "text" || sortValue == "date")
+						{
+							if (string.IsNullOrEmpty(command.SortBy))
+								command.SortBy = sortValue;
+							else
+								command.ThenBy = sortValue;
+						}
+						else
+							Console.WriteLine($"Ошибка: Неверное значение сортировки '{parts[i + 1]}'");
+						i++;
+					}
+					break;
+
+				case "--desc":
+					command.SortDesc = true;
+					break;
+
+				case "--top":
+					if (i + 1 < parts.Length)
+					{
+						if (int.TryParse(parts[i + 1], out int top) && top > 0)
+							command.Top = top;
+						else
+							Console.WriteLine($"Ошибка: Неверное значение top '{parts[i + 1]}'");
+						i++;
+					}
+					break;
+			}
+		}
+
+		return command;
 	}
 }
