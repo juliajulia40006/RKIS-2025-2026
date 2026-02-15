@@ -119,3 +119,11 @@ lesson 12:
 -убран прямой вызов FileManager 
 
 /*
+
+/* 
+lesson 13:
++добавлено SearchCommand.cs
++добавлено SearchCommandParse in CommandParser
++Добавлена строка statusItem = item; для починки ошибки, из-за которой при добавлении статуса программа ломалась
++добавлены флаги для searchcommand
+/*
