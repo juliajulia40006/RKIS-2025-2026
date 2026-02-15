@@ -31,6 +31,17 @@ public class HelpCommand : ICommand
 		Completed => выполнено.
 		Postponed => отложено.
 		Failed => провалено.
+		---------------------------------------------------------
+		Команда search:
+		--contains <text> - поиск по содержанию текста
+		--starts-with <text> - задачи, начинающиеся с текста
+		--ends-with <text> - задачи, заканчивающиеся текстом
+		--from <date> - задачи с даты (yyyy-MM-dd)
+		--to <date> - задачи до даты (yyyy-MM-dd)
+		--status <status> - фильтр по статусу
+		--sort text/date - сортировка
+		--desc - сортировка по убыванию
+		--top <n> - показать первые n задач
 		""");
     }
 
