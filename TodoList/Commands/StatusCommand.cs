@@ -1,10 +1,11 @@
-﻿namespace TodoList.Commands;
+﻿using static TodoList.TodoList;
+namespace TodoList.Commands;
 
 public class StatusCommand : ICommand
 {
     public int TaskIndex { get; set; }
     public TodoStatus Status { get; set; }
-	public List<TodoList> TodoList { get; set; }
+	public TodoList TodoList { get; set; }
 
 	private TodoStatus previousStatus;
 	private int itemIndex;

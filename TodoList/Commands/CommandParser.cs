@@ -131,19 +131,19 @@ public static class CommandParser
         return command;
     }
 
-    private static ICommand ParseStatusCommand(string argument, List<TodoItem> todoItems, Profile profile)
+    private static ICommand ParseStatusCommand(string argument, List<TodoList> todoItems, Profile profile)
 	{
         if (string.IsNullOrEmpty(argument))
         {
             Console.WriteLine("Ошибка: Используйте: status <номер> <статус>");
-            return new StatusCommand { TodoItems = todoItems };
+            return new StatusCommand { TodoList = todoItems };
         }
 
         string[] parts = argument.Split(' ', 2);
         if (parts.Length < 2)
         {
             Console.WriteLine("Ошибка: Используйте: status <номер> <статус>");
-            return new StatusCommand { TodoItems = todoItems };
+            return new StatusCommand { TodoList = todoItems };
         }
 
         if (int.TryParse(parts[0], out int taskIndex))
@@ -154,19 +154,19 @@ public static class CommandParser
             if (status == TodoStatus.NotStarted && statusStr != "notstarted")
             {
                 Console.WriteLine($"Ошибка: Неизвестный статус '{parts[1]}'. Допустимые статусы: notstarted, inprogress, completed, postponed, failed");
-                return new StatusCommand { TodoItems = todoItems };
+                return new StatusCommand { TodoList = todoItems };
             }
 
             return new StatusCommand
             {
-				TodoItems = todoItems,
+				TodoList = todoItems,
                 TaskIndex = taskIndex,
                 Status = status
             };
         }
 
         Console.WriteLine("Ошибка: Используйте: status <номер> <статус>");
-        return new StatusCommand { TodoItems = todoItems };
+        return new StatusCommand { TodoList = todoItems };
     }
 
     private static ICommand ParseDeleteCommand(string argument, List<TodoItem> todoItems, Profile profile)
