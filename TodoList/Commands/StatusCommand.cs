@@ -1,22 +1,20 @@
-﻿using static TodoList.TodoItem;
-
-namespace TodoList.Commands;
+﻿namespace TodoList.Commands;
 
 public class StatusCommand : ICommand
 {
     public int TaskIndex { get; set; }
     public TodoStatus Status { get; set; }
-	public List<TodoItem> TodoItems { get; set; }
+	public List<TodoList> TodoList { get; set; }
 
 	private TodoStatus previousStatus;
 	private int itemIndex;
 	private TodoItem statusItem;
 	public void Execute()
     {
-        if (TaskIndex >= 1 && TaskIndex <= TodoItems.Count)
+        if (TaskIndex >= 1 && TaskIndex <= TodoList.Count)
         {
             int index = TaskIndex - 1;
-			var item = TodoItems[index];
+			var item = TodoList[index];
 
 			statusItem = item;
 			previousStatus = item.Status;
@@ -33,9 +31,9 @@ public class StatusCommand : ICommand
 
 	public void Unexecute()
 	{
-		if (itemIndex >= 0 && itemIndex < TodoItems.Count)
+		if (itemIndex >= 0 && itemIndex < TodoList.Count)
 		{
-			var item = TodoItems[itemIndex];
+			var item = TodoList[itemIndex];
 			item.SetStatus(previousStatus);
 		}
 	}

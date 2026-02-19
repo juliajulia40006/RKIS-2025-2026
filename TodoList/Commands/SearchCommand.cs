@@ -1,6 +1,4 @@
-﻿using static TodoList.TodoItem;
-
-namespace TodoList.Commands;
+﻿namespace TodoList.Commands;
 
 public class SearchCommand : ICommand
 {

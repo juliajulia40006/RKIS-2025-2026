@@ -126,4 +126,8 @@ lesson 13:
 +добавлено SearchCommandParse in CommandParser
 +Добавлена строка statusItem = item; для починки ошибки, из-за которой при добавлении статуса программа ломалась
 +добавлены флаги для searchcommand
+
+lesson 13: fixes
+
+
 /*
