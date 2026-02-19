@@ -3,19 +3,18 @@ public class UpdateCommand : ICommand
 {
     public int TaskIndex { get; set; }
     public string NewText { get; set; } = "";
-	public List<TodoItem> TodoItems { get; set; }
+	public TodoList TodoList { get; set; }
 
 	private int itemIndex;
 	private string oldText;
 	private TodoItem updatedItem;
-	private TodoList todoList;
 
 	public void Execute()
     {
-		if (TodoItems != null && TaskIndex >= 1 && TaskIndex <= TodoItems.Count)
+		if (TodoList != null && TaskIndex >= 1 && TaskIndex <= TodoList	.Count)
 		{
             int index = TaskIndex - 1;
-			updatedItem = TodoItems[index];
+			updatedItem = TodoList[index];
 			oldText = updatedItem.Text;
 			itemIndex = index;
 
@@ -25,15 +24,11 @@ public class UpdateCommand : ICommand
                 return;
             }
 
-			if (todoList == null)
-			{
-				todoList = new TodoList();
-			}
+			TodoList.Update(TaskIndex, NewText);
+			Console.WriteLine($"Задача обновлена: '{oldText}' -> '{NewText}'");
+		}
 
-			updatedItem.UpdateText(NewText);
-            Console.WriteLine($"Задача обновлена: '{oldText}' -> '{NewText}'");
-        }
-        else
+		else
         {
             Console.WriteLine("Ошибка: Используйте: update \"номер\" новый текст");
         }
@@ -41,9 +36,9 @@ public class UpdateCommand : ICommand
 
 	public void Unexecute()
 	{
-		if (updatedItem != null && oldText != null)
+		if (updatedItem != null && oldText != null && TodoList != null)
 		{
-			updatedItem.UpdateText(oldText);
+			TodoList.Update(itemIndex + 1, oldText);
 		}
 	}
 }

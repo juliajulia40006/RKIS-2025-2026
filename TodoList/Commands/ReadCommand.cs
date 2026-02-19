@@ -3,14 +3,14 @@ namespace TodoList.Commands;
 public class ReadCommand : ICommand
 {
     public int TaskIndex { get; set; }
-	public List<TodoItem> TodoItems { get; set; }
+	public TodoList TodoList { get; set; }
 
 	public void Execute()
     {
-		if (TodoItems != null && TaskIndex >= 1 && TaskIndex <= TodoItems.Count)
+		if (TodoList != null && TaskIndex >= 1 && TaskIndex <= TodoList.Count)
 		{
             int index = TaskIndex - 1;
-            TodoItem item = TodoItems[index];
+            TodoItem item = TodoList[index];
             Console.WriteLine($"Задача #{TaskIndex}:");
             Console.WriteLine(item.GetFullInfo());
         }

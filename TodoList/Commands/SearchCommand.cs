@@ -2,7 +2,7 @@
 
 public class SearchCommand : ICommand
 {
-	public List<TodoItem> TodoItems { get; set; }
+	public TodoList TodoList { get; set; }
 
 	public string? ContainsText { get; set; }
 	public string? StartsWithText { get; set; }
@@ -17,7 +17,7 @@ public class SearchCommand : ICommand
 
 	public void Execute()
 	{
-		var query = TodoItems.AsEnumerable();
+		var query = TodoList.AsEnumerable();
 
 		if (!string.IsNullOrEmpty(ContainsText))
 			query = query.Where(item => item.Text.Contains(ContainsText));

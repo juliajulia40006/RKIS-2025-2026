@@ -1,12 +1,8 @@
-﻿using TodoList;
-using static TodoList.TodoItem;
-using TodoList.Commands;
-
-namespace TodoList.Commands;
+﻿namespace TodoList.Commands;
 
 public static class CommandParser
 {
-	private static Dictionary<string, Func<string, List<TodoItem>, Profile, ICommand>> _commandHandlers = new();
+	private static Dictionary<string, Func<string, TodoList , Profile, ICommand>> _commandHandlers = new();
 
 	static CommandParser()
 	{
@@ -24,7 +20,7 @@ public static class CommandParser
 		_commandHandlers["search"] = ParseSearchCommand;
 	}
 
-	public static ICommand Parse(string inputString, List<TodoItem> todoItems, Profile profile)
+	public static ICommand Parse(string inputString, TodoList todoList , Profile profile)
 
     {
         if (string.IsNullOrEmpty(inputString))
@@ -35,18 +31,18 @@ public static class CommandParser
         string argument = parts.Length > 1 ? parts[1] : "";
 
 		if (_commandHandlers.TryGetValue(command, out var handler))
-			return handler(argument, todoItems, profile);
+			return handler(argument, todoList, profile);
 
 		Console.WriteLine("Неизвестная команда. Введите 'help' для справки.");
 		return null;
 
 	}
-	private static ICommand ParseHelpCommand(string argument, List<TodoItem> todoItems, Profile profile)
+	private static ICommand ParseHelpCommand(string argument, TodoList todoList , Profile profile)
 	{
 		return new HelpCommand();
 	}
 
-	private static ICommand ParseProfileCommand(string argument, List<TodoItem> todoItems, Profile profile)
+	private static ICommand ParseProfileCommand(string argument, TodoList todoList , Profile profile)
 	{
 		var command = new ProfileCommand { Profile = profile };
 
@@ -65,9 +61,9 @@ public static class CommandParser
 
 		return command;
 	}
-	private static ICommand ParseAddCommand(string argument, List<TodoItem> todoItems, Profile profile)
+	private static ICommand ParseAddCommand(string argument, TodoList todoList, Profile profile)
 	{
-        var command = new AddCommand { TodoItems = todoItems };
+        var command = new AddCommand { TodoList = todoList };
 
         if (string.IsNullOrEmpty(argument))
         {
@@ -91,9 +87,9 @@ public static class CommandParser
         return command;
     }
 
-    private static ICommand ParseViewCommand(string argument, List<TodoItem> todoItems, Profile profile)
+    private static ICommand ParseViewCommand(string argument, TodoList todoList, Profile profile)
 	{
-        var command = new ViewCommand { TodoItems = todoItems };
+        var command = new ViewCommand { TodoList = todoList };
 
         if (!string.IsNullOrEmpty(argument))
         {
@@ -131,7 +127,7 @@ public static class CommandParser
         return command;
     }
 
-    private static ICommand ParseStatusCommand(string argument, List<TodoList> todoItems, Profile profile)
+    private static ICommand ParseStatusCommand(string argument,TodoList, Profile profile)
 	{
         if (string.IsNullOrEmpty(argument))
         {

@@ -6,7 +6,7 @@ public class ViewCommand : ICommand
     public bool ShowStatus { get; set; } = false;
     public bool ShowDate { get; set; } = false;
     public bool ShowAll { get; set; } = false;
-	public List<TodoItem> TodoItems { get; set; }
+	public TodoList TodoList { get; set; }
 
 	public void Execute()
     {
@@ -17,7 +17,8 @@ public class ViewCommand : ICommand
             ShowDate = true;
         }
 
-        TodoList.View(TodoItems, ShowIndex, ShowStatus, ShowDate);
+		var items = TodoList.ToList();
+		TodoList.View(items, ShowIndex, ShowStatus, ShowDate);
     }
 	public void Unexecute()
 	{

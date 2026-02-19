@@ -1,5 +1,4 @@
-﻿using static TodoList.TodoList;
-namespace TodoList.Commands;
+﻿namespace TodoList.Commands;
 
 public class StatusCommand : ICommand
 {
@@ -39,8 +38,5 @@ public class StatusCommand : ICommand
 		}
 	}
 
-	private string GetStatusText(TodoStatus status)
-    {
-        return TodoItem.GetStatusText(status);
-    }
+	private string GetStatusText(TodoStatus status) => TodoItem.GetStatusText(status);
 }

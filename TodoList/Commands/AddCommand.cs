@@ -3,8 +3,7 @@ public class AddCommand : ICommand
 {
     public bool Multiline { get; set; } = false;
     public string TaskText { get; set; } = "";
-	public List<TodoItem> TodoItems { get; set; }
-	public TodoList? TodoList { get; set; }
+	public TodoList TodoList { get; set; }
 
 	private TodoItem _addedItem;
 
@@ -40,10 +39,10 @@ public class AddCommand : ICommand
             }
 
 			_addedItem = new TodoItem(multilineTask);
-			TodoItems.Add(_addedItem);
+			TodoList.Add(_addedItem);
 			if (TodoList != null)
 			{
-				int index = TodoItems.Count - 1;
+				int index = TodoList.Count - 1;
 			}
 			Console.WriteLine("Добавлена многострочная задача");
         }
@@ -56,30 +55,28 @@ public class AddCommand : ICommand
             }
 
 			_addedItem = new TodoItem(TaskText);
-			TodoItems.Add(_addedItem);
+			TodoList.Add(_addedItem);
 			Console.WriteLine($"Добавлено: {TaskText}.");
-        }
+        }	
     }
 
 	public void Unexecute()
 	{
-		if (_addedItem != null && TodoItems != null && TodoItems.Count > 0)
+		if (_addedItem != null && TodoList != null && TodoList.Count > 0)
 		{
-			int index = TodoItems.Count - 1;
-			if (index >= 0 && TodoItems[index] == _addedItem)
+			int index = - 1;
+			for (int i = 0; i < TodoList.Count; i++)
 			{
-				TodoItems.RemoveAt(index);
-			}
-			else
-			{
-				for (int i = 0; i < TodoItems.Count; i++)
+				if (TodoList[i] == _addedItem)
 				{
-					if (TodoItems[i] == _addedItem)
-					{
-						TodoItems.RemoveAt(i);
-						break;
-					}
+					index = i;
+					break;
 				}
+			}
+
+			if (index >= 0)
+			{
+				TodoList.Delete(index + 1);
 			}
 		}
 	}
