@@ -34,6 +34,7 @@ class Program
 		}
 
 		InitializeTodoList();
+		CommandParser.Initialize(currentTodoList, AppInfo.CurrentProfile);
 
 		while (true)
 		{
@@ -45,7 +46,7 @@ class Program
 
 			var currentTodos = AppInfo.GetCurrentTodos();
 			var currentProfile = AppInfo.CurrentProfile;
-			ICommand command = CommandParser.Parse(input, currentTodoList, AppInfo.CurrentProfile);
+			ICommand command = CommandParser.Parse(input);
 
 			if (command is ExitCommand)
 			{
@@ -120,6 +121,7 @@ class Program
 			AppInfo.redoStack.Clear();
 
 			InitializeTodoList();
+			CommandParser.Initialize(currentTodoList, AppInfo.CurrentProfile);
 			return true;
 		}
 
@@ -167,6 +169,7 @@ class Program
 		Console.WriteLine($"Профиль создан! Добро пожаловать, {profile.GetInfo()}!");
 
 		InitializeTodoList();
+		CommandParser.Initialize(currentTodoList, AppInfo.CurrentProfile);
 		return true;
 	}
 

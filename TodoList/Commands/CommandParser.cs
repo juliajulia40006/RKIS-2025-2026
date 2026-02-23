@@ -2,7 +2,15 @@
 
 public static class CommandParser
 {
-	private static Dictionary<string, Func<string, TodoList , Profile, ICommand>> _commandHandlers = new();
+	private static Dictionary<string, Func<string, ICommand>> _commandHandlers = new();
+	private static TodoList _currentTodoList;
+	private static Profile _currentProfile;
+
+	public static void Initialize(TodoList todoList, Profile profile)
+	{
+		_currentTodoList = todoList;
+		_currentProfile = profile;
+	}
 
 	static CommandParser()
 	{
@@ -20,7 +28,7 @@ public static class CommandParser
 		_commandHandlers["search"] = ParseSearchCommand;
 	}
 
-	public static ICommand Parse(string inputString, TodoList todoList , Profile profile)
+	public static ICommand Parse(string inputString)
 
     {
         if (string.IsNullOrEmpty(inputString))
@@ -31,20 +39,20 @@ public static class CommandParser
         string argument = parts.Length > 1 ? parts[1] : "";
 
 		if (_commandHandlers.TryGetValue(command, out var handler))
-			return handler(argument, todoList, profile);
+			return handler(argument);
 
 		Console.WriteLine("Неизвестная команда. Введите 'help' для справки.");
 		return null;
 
 	}
-	private static ICommand ParseHelpCommand(string argument, TodoList todoList , Profile profile)
+	private static ICommand ParseHelpCommand(string argument)
 	{
 		return new HelpCommand();
 	}
 
-	private static ICommand ParseProfileCommand(string argument, TodoList todoList , Profile profile)
+	private static ICommand ParseProfileCommand(string argument)
 	{
-		var command = new ProfileCommand { Profile = profile };
+		var command = new ProfileCommand { Profile = _currentProfile };
 
 		if (!string.IsNullOrEmpty(argument))
 		{
@@ -61,9 +69,9 @@ public static class CommandParser
 
 		return command;
 	}
-	private static ICommand ParseAddCommand(string argument, TodoList todoList, Profile profile)
+	private static ICommand ParseAddCommand(string argument)
 	{
-        var command = new AddCommand { TodoList = todoList };
+        var command = new AddCommand { TodoList = _currentTodoList };
 
         if (string.IsNullOrEmpty(argument))
         {
@@ -87,9 +95,9 @@ public static class CommandParser
         return command;
     }
 
-    private static ICommand ParseViewCommand(string argument, TodoList todoList, Profile profile)
+    private static ICommand ParseViewCommand(string argument)
 	{
-        var command = new ViewCommand { TodoList = todoList };
+        var command = new ViewCommand { TodoList = _currentTodoList };
 
         if (!string.IsNullOrEmpty(argument))
         {
@@ -127,19 +135,19 @@ public static class CommandParser
         return command;
     }
 
-	private static ICommand ParseStatusCommand(string argument, TodoList todoList, Profile profile)
+	private static ICommand ParseStatusCommand(string argument)
 	{
 		if (string.IsNullOrEmpty(argument))
 		{
 			Console.WriteLine("Ошибка: Используйте: status <номер> <статус>");
-			return new StatusCommand { TodoList = todoList };
+			return new StatusCommand { TodoList = _currentTodoList };
 		}
 
 		string[] parts = argument.Split(' ', 2);
 		if (parts.Length < 2)
 		{
 			Console.WriteLine("Ошибка: Используйте: status <номер> <статус>");
-			return new StatusCommand { TodoList = todoList };
+			return new StatusCommand { TodoList = _currentTodoList };
 		}
 
 		if (int.TryParse(parts[0], out int taskIndex))
@@ -150,7 +158,7 @@ public static class CommandParser
 				TodoStatus status = Enum.Parse<TodoStatus>(statusStr, true);
 				return new StatusCommand
 				{
-					TodoList = todoList,
+					TodoList = _currentTodoList,
 					TaskIndex = taskIndex,
 					Status = status
 				};
@@ -158,47 +166,35 @@ public static class CommandParser
 			catch (ArgumentException)
 			{
 				Console.WriteLine($"Ошибка: Неизвестный статус '{parts[1]}'. Допустимые статусы: notstarted, inprogress, completed, postponed, failed");
-				return new StatusCommand { TodoList = todoList };
+				return new StatusCommand { TodoList = _currentTodoList };
 			}
 		}
 
 		Console.WriteLine("Ошибка: Используйте: status <номер> <статус>");
-		return new StatusCommand { TodoList = todoList };
+		return new StatusCommand { TodoList = _currentTodoList };
 	}
-
-	private static ICommand ParseDeleteCommand(string argument, TodoList todoList)
-	{
-		if (int.TryParse(argument, out int taskIndex))
-		{
-			return new DeleteCommand { TodoList = todoList, TaskIndex = taskIndex };
-		}
-
-		Console.WriteLine("Ошибка: Используйте: delete <номер>");
-		return new DeleteCommand { TodoList = todoList };
-	}
-
-	private static ICommand ParseDeleteCommand(string argument, TodoList todoList, Profile profile)
-	{
+	private static ICommand ParseDeleteCommand(string argument)
+    {
         if (int.TryParse(argument, out int taskIndex))
         {
-            return new DeleteCommand { TodoList = todoList, TaskIndex = taskIndex };
+            return new DeleteCommand { TodoList = _currentTodoList, TaskIndex = taskIndex };
         }
-        return new DeleteCommand { TodoList = todoList };
+        return new DeleteCommand { TodoList = _currentTodoList };
     }
 
-    private static ICommand ParseUpdateCommand (string argument, TodoList todoList , Profile profile)
+	private static ICommand ParseUpdateCommand (string argument)
 	{
         if (string.IsNullOrEmpty(argument))
         {
             Console.WriteLine("Ошибка: Используйте: update <номер> новый текст");
-            return new UpdateCommand { TodoList = todoList };
+            return new UpdateCommand { TodoList = _currentTodoList };
         }
 
         int firstSpaceIndex = argument.IndexOf(' ');
         if (firstSpaceIndex <= 0)
         {
             Console.WriteLine("Ошибка: Используйте: update <номер> новый текст");
-            return new UpdateCommand { TodoList = todoList };
+            return new UpdateCommand { TodoList = _currentTodoList };
         }
 
         string indexPart = argument.Substring(0, firstSpaceIndex).Trim();
@@ -208,43 +204,43 @@ public static class CommandParser
         {
             return new UpdateCommand
             {
-				TodoList = todoList,
+				TodoList = _currentTodoList,
                 TaskIndex = updateIndex,
                 NewText = textPart
             };
         }
 
         Console.WriteLine("Ошибка: Используйте: update <номер> новый текст");
-        return new UpdateCommand { TodoList = todoList };
+        return new UpdateCommand { TodoList = _currentTodoList };
     }
 
-    private static ICommand ParseReadCommand(string argument, TodoList todoList, Profile profile)
+    private static ICommand ParseReadCommand(string argument)
 {
         if (int.TryParse(argument, out int taskIndex))
         {
-            return new ReadCommand { TodoList = todoList, TaskIndex = taskIndex };
+            return new ReadCommand { TodoList = _currentTodoList, TaskIndex = taskIndex };
         }
-        return new ReadCommand { TodoList = todoList };
+        return new ReadCommand { TodoList = _currentTodoList };
     }
 
-	private static ICommand ParseUndoCommand(string args, TodoList todoList, Profile profile)
+	private static ICommand ParseUndoCommand(string args)
 	{
 		return new UndoCommand();
 	}
 
-	private static ICommand ParseRedoCommand(string args, TodoList todoList, Profile profile)
+	private static ICommand ParseRedoCommand(string args)
 	{
 		return new RedoCommand();
 	}
 
-	private static ICommand ParseExitCommand(string args, TodoList todoList, Profile profile)
+	private static ICommand ParseExitCommand(string args)
 	{
 		return new ExitCommand();
 	}
 
-	private static ICommand ParseSearchCommand(string argument, TodoList todoList, Profile profile)
+	private static ICommand ParseSearchCommand(string argument)
 	{
-		var command = new SearchCommand { TodoList = todoList };
+		var command = new SearchCommand { TodoList = _currentTodoList };
 
 		if (string.IsNullOrEmpty(argument))
 			return command;
