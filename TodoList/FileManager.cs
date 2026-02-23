@@ -1,7 +1,4 @@
-﻿using System;
-using static TodoList.TodoItem;
-
-namespace TodoList;
+﻿namespace TodoList;
 
 public static class FileManager
 {
@@ -59,7 +56,19 @@ public static class FileManager
 	{
 		if (AppInfo.CurrentProfileId.HasValue)
 		{
-			AppInfo.SaveUserTodos(AppInfo.CurrentProfileId.Value);
+			var userId = AppInfo.CurrentProfileId.Value;
+			var currentList = Program.CurrentTodoList;
+			if (currentList != null)
+			{
+				var todoItems = new List<TodoItem>();
+				foreach (var todo in currentList)
+				{
+					todoItems.Add(todo);
+				}
+				AppInfo.UserTodos[userId] = todoItems;
+				AppInfo.SaveUserTodos(userId);
+				Console.WriteLine("задача сохранена");
+			}
 		}
 	}
 

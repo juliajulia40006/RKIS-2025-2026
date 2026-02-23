@@ -1,11 +1,10 @@
-﻿using System;
-using TodoList.Commands;
+﻿using TodoList.Commands;
 using TodoList;
-using System.IO;
 
 class Program
 {
 	private static TodoList.TodoList currentTodoList;
+	public static TodoList.TodoList CurrentTodoList => currentTodoList;
 
 	static void Main(string[] args)
 	{
@@ -43,10 +42,10 @@ class Program
 
 			if (string.IsNullOrEmpty(input))
 				continue;
+
 			var currentTodos = AppInfo.GetCurrentTodos();
 			var currentProfile = AppInfo.CurrentProfile;
-
-			ICommand command = CommandParser.Parse(input, currentTodos, currentProfile);
+			ICommand command = CommandParser.Parse(input, currentTodoList, AppInfo.CurrentProfile);
 
 			if (command is ExitCommand)
 			{
@@ -79,7 +78,12 @@ class Program
 	private static void InitializeTodoList()
 	{
 		if (!AppInfo.CurrentProfileId.HasValue) return;
+		var userTodos = AppInfo.GetCurrentTodos();
 		currentTodoList = new TodoList.TodoList();
+		foreach (var todo in userTodos)
+		{
+			currentTodoList.Add(todo);
+		}
 
 		currentTodoList.OnTodoAdded += FileManager.SaveTodoList;
 		currentTodoList.OnTodoDeleted += FileManager.SaveTodoList;

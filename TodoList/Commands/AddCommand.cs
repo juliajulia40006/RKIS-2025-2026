@@ -45,7 +45,7 @@ public class AddCommand : ICommand
 				int index = TodoList.Count - 1;
 			}
 			Console.WriteLine("Добавлена многострочная задача");
-        }
+		}
         else
         {
             if (string.IsNullOrEmpty(TaskText))
