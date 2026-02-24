@@ -138,14 +138,14 @@ public static class CommandParser
 		if (string.IsNullOrEmpty(argument))
 		{
 			Console.WriteLine("Ошибка: Используйте: status <номер> <статус>");
-			return new StatusCommand { TodoList = _currentTodoList };
+			return null;
 		}
 
 		string[] parts = argument.Split(' ', 2);
 		if (parts.Length < 2)
 		{
 			Console.WriteLine("Ошибка: Используйте: status <номер> <статус>");
-			return new StatusCommand { TodoList = _currentTodoList };
+			return null;
 		}
 
 		if (int.TryParse(parts[0], out int taskIndex))
@@ -164,7 +164,7 @@ public static class CommandParser
 			catch (ArgumentException)
 			{
 				Console.WriteLine($"Ошибка: Неизвестный статус '{parts[1]}'. Допустимые статусы: notstarted, inprogress, completed, postponed, failed");
-				return new StatusCommand { TodoList = _currentTodoList };
+				return null;
 			}
 		}
 

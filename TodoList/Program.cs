@@ -151,7 +151,7 @@ class Program
 				p.Password == password);
 
 			if (profile == null)
-				throw new AuthenticationException("Неверный логин или пароль.");
+				throw new ProfileNotFoundException(login);
 
 			AppInfo.CurrentProfileId = profile.Id;
 			AppInfo.CurrentProfile = profile;
