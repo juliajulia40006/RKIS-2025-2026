@@ -1,4 +1,6 @@
-﻿namespace TodoList.Commands;
+﻿using TodoList.Exceptions;
+
+namespace TodoList.Commands;
 
 public class StatusCommand : ICommand
 {
@@ -11,23 +13,22 @@ public class StatusCommand : ICommand
 	private TodoItem statusItem;
 	public void Execute()
     {
-        if (TaskIndex >= 1 && TaskIndex <= TodoList.Count)
-        {
-            int index = TaskIndex - 1;
-			var item = TodoList[index];
+		if (TodoList == null)
+			throw new InvalidOperationException("Список задач не инициализирован.");
 
-			statusItem = item;
-			previousStatus = item.Status;
-			itemIndex = index;
-			item.SetStatus(Status);
-            string statusText = TodoItem.GetStatusText(Status);
-            Console.WriteLine($"Задача '{statusItem.Text}' отмечена как '{statusText}'!");
-        }
-        else
-        {
-            Console.WriteLine("Неверный номер задачи!");
-        }
-    }
+		if (TaskIndex < 1 || TaskIndex > TodoList.Count)
+			throw new TaskNotFoundException(TaskIndex);
+
+		int index = TaskIndex - 1;
+		var item = TodoList[index];
+
+		statusItem = item;
+		previousStatus = item.Status;
+		itemIndex = index;
+		item.SetStatus(Status);
+		string statusText = TodoItem.GetStatusText(Status);
+		Console.WriteLine($"Задача '{statusItem.Text}' отмечена как '{statusText}'!");
+	}
 
 	public void Unexecute()
 	{
