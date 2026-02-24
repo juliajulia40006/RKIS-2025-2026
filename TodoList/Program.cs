@@ -129,15 +129,30 @@ class Program
 		Console.Write("Логин: ");
 		string login = Console.ReadLine()?.Trim();
 
+		if (string.IsNullOrEmpty(login))
+		{
+			Console.WriteLine("Ошибка: Логин не может быть пустым.");
+			return false;
+		}
+
 		Console.Write("Пароль: ");
 		string password = Console.ReadLine()?.Trim();
 
-		var profile = AppInfo.Profiles.FirstOrDefault(p =>
-			p.Login.Equals(login, StringComparison.OrdinalIgnoreCase) &&
-			p.Password == password);
-
-		if (profile != null)
+		if (string.IsNullOrEmpty(password))
 		{
+			Console.WriteLine("Ошибка: Пароль не может быть пустым.");
+			return false;
+		}
+
+		try
+		{
+			var profile = AppInfo.Profiles.FirstOrDefault(p =>
+				p.Login.Equals(login, StringComparison.OrdinalIgnoreCase) &&
+				p.Password == password);
+
+			if (profile == null)
+				throw new AuthenticationException("Неверный логин или пароль.");
+
 			AppInfo.CurrentProfileId = profile.Id;
 			AppInfo.CurrentProfile = profile;
 
@@ -154,9 +169,11 @@ class Program
 			CommandParser.Initialize(currentTodoList, AppInfo.CurrentProfile);
 			return true;
 		}
-
-		Console.WriteLine("Неверный логин или пароль.");
-		return false;
+		catch (AuthenticationException ex)
+		{
+			Console.WriteLine($"Ошибка: {ex.Message}");
+			return false;
+		}
 	}
 
 	private static bool RegisterUser()
