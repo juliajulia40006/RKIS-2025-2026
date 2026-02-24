@@ -83,7 +83,7 @@ public class SearchCommand : ICommand
 		}
 
 		Console.WriteLine("\nРезультаты поиска:");
-		TodoList.View(results, true, true, true);
+		TodoList.View(results);
 	}
 
 	public void Unexecute() { }

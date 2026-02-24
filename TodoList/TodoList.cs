@@ -54,7 +54,7 @@ public class TodoList : IEnumerable<TodoItem>
         return GetEnumerator();
     }
 
-    public static void View(List<TodoItem> items, bool showIndex, bool showStatus, bool showDate)
+    public static void View(List<TodoItem> items, bool showIndex = true, bool showStatus = true, bool showDate = true)
     {
         if (items.Count == 0)
         {
