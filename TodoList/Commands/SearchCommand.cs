@@ -17,6 +17,12 @@ public class SearchCommand : ICommand
 
 	public void Execute()
 	{
+		if (TodoList == null || TodoList.Count == 0)
+		{
+			Console.WriteLine("Список задач пуст.");
+			return;
+		}
+
 		var query = TodoList.AsEnumerable();
 
 		if (!string.IsNullOrEmpty(ContainsText))
