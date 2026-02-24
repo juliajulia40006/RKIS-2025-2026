@@ -1,4 +1,5 @@
-﻿namespace TodoList.Commands;
+﻿using TodoList.Exceptions;
+namespace TodoList.Commands;
 public class DeleteCommand : ICommand, IUndo
 {
 	public int TaskIndex { get; set; }
@@ -8,18 +9,17 @@ public class DeleteCommand : ICommand, IUndo
 
 	public void Execute()
 	{
-		if (TaskIndex >= 1 && TaskIndex <= TodoList.Count)
-		{
-			deletedIndex = TaskIndex - 1;
-			deletedItem = TodoList[deletedIndex];
-			string deletedTask = deletedItem.Text;
-			TodoList.Delete(deletedIndex);
-			Console.WriteLine($"Задача '{deletedTask}' удалена.");
-		}
-		else
-		{
-			Console.WriteLine("Неверный номер задачи!");
-		}
+		if (TodoList == null)
+			throw new InvalidOperationException("Список задач не инициализирован.");
+
+		if (TaskIndex < 1 || TaskIndex > TodoList.Count)
+			throw new TaskNotFoundException(TaskIndex);
+
+		deletedIndex = TaskIndex - 1;
+		deletedItem = TodoList[deletedIndex];
+		string deletedTask = deletedItem.Text;
+		TodoList.Delete(deletedIndex);
+		Console.WriteLine($"Задача '{deletedTask}' удалена.");
 	}
 
 	public void Unexecute()
