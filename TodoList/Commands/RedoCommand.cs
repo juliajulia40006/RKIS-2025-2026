@@ -1,23 +1,22 @@
-﻿
-namespace TodoList.Commands;
+﻿namespace TodoList.Commands;
 
 public class RedoCommand : ICommand
 {
 	public void Execute()
 	{
-		if (AppInfo.redoStack.Count > 0)
+		if (AppInfo.redoStack.Count == 0)
+			throw new InvalidOperationException("Нет команд для повтора.");
+
+		ICommand command = AppInfo.redoStack.Pop();
+		if (command is IUndo undoableCommand)
 		{
-			ICommand command = AppInfo.redoStack.Pop();
-			if(command is IUndo undoableCommand)
-			{
-				command.Execute();
-				AppInfo.undoStack.Push(command);
-				Console.WriteLine("Команда повторена.");
-			}
+			command.Execute();
+			AppInfo.undoStack.Push(command);
+			Console.WriteLine("Команда повторена.");
 		}
 		else
 		{
-			Console.WriteLine("Нет команд для повтора.");
+			throw new InvalidOperationException("Эта команда не поддерживает повтор.");
 		}
 	}
 
