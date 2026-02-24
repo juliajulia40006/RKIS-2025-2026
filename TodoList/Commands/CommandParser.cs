@@ -1,4 +1,5 @@
-﻿namespace TodoList.Commands;
+﻿using TodoList.Exceptions;
+namespace TodoList.Commands;
 
 public static class CommandParser
 {
@@ -29,21 +30,18 @@ public static class CommandParser
 	}
 
 	public static ICommand Parse(string inputString)
+	{
+		if (string.IsNullOrEmpty(inputString))
+			throw new InvalidCommandException("Команда не может быть пустой.");
 
-    {
-        if (string.IsNullOrEmpty(inputString))
-            return null;
-
-        string[] parts = inputString.Split(' ', 2);
-        string command = parts[0].ToLower();
-        string argument = parts.Length > 1 ? parts[1] : "";
+		string[] parts = inputString.Split(' ', 2);
+		string command = parts[0].ToLower();
+		string argument = parts.Length > 1 ? parts[1] : "";
 
 		if (_commandHandlers.TryGetValue(command, out var handler))
 			return handler(argument);
 
-		Console.WriteLine("Неизвестная команда. Введите 'help' для справки.");
-		return null;
-
+		throw new InvalidCommandException($"Неизвестная команда '{command}'. Введите 'help' для справки.");
 	}
 	private static ICommand ParseHelpCommand(string argument)
 	{
@@ -175,52 +173,93 @@ public static class CommandParser
 	}
 	private static ICommand ParseDeleteCommand(string argument)
     {
-        if (int.TryParse(argument, out int taskIndex))
-        {
-            return new DeleteCommand { TodoList = _currentTodoList, TaskIndex = taskIndex };
-        }
-        return new DeleteCommand { TodoList = _currentTodoList };
-    }
+		if (string.IsNullOrEmpty(argument))
+		{
+			Console.WriteLine("Ошибка: Используйте: delete <номер>");
+			return new DeleteCommand { TodoList = _currentTodoList };
+		}
+
+		if (!int.TryParse(argument, out int taskIndex))
+		{
+			Console.WriteLine("Ошибка: Номер задачи должен быть числом.");
+			return new DeleteCommand { TodoList = _currentTodoList };
+		}
+
+		if (taskIndex < 1 || taskIndex > _currentTodoList.Count)
+		{
+			Console.WriteLine("Ошибка: Задачи с таким номером не существует.");
+			return new DeleteCommand { TodoList = _currentTodoList };
+		}
+
+		return new DeleteCommand { TodoList = _currentTodoList, TaskIndex = taskIndex };
+	}
 
 	private static ICommand ParseUpdateCommand (string argument)
 	{
-        if (string.IsNullOrEmpty(argument))
-        {
-            return new UpdateCommand { TodoList = _currentTodoList };
-        }
+		if (string.IsNullOrEmpty(argument))
+		{
+			Console.WriteLine("Ошибка: Используйте: update <номер> новый текст");
+			return new UpdateCommand { TodoList = _currentTodoList };
+		}
 
-        int firstSpaceIndex = argument.IndexOf(' ');
-        if (firstSpaceIndex <= 0)
-        {
-            Console.WriteLine("Ошибка: Используйте: update <номер> новый текст");
-            return new UpdateCommand { TodoList = _currentTodoList };
-        }
+		int firstSpaceIndex = argument.IndexOf(' ');
+		if (firstSpaceIndex <= 0)
+		{
+			Console.WriteLine("Ошибка: Используйте: update <номер> новый текст");
+			return new UpdateCommand { TodoList = _currentTodoList };
+		}
 
-        string indexPart = argument.Substring(0, firstSpaceIndex).Trim();
-        string textPart = argument.Substring(firstSpaceIndex + 1).Trim();
+		string indexPart = argument.Substring(0, firstSpaceIndex).Trim();
+		string textPart = argument.Substring(firstSpaceIndex + 1).Trim();
 
-        if (int.TryParse(indexPart, out int updateIndex) && !string.IsNullOrEmpty(textPart))
-        {
-            return new UpdateCommand
-            {
-				TodoList = _currentTodoList,
-                TaskIndex = updateIndex,
-                NewText = textPart
-            };
-        }
+		if (!int.TryParse(indexPart, out int updateIndex))
+		{
+			Console.WriteLine("Ошибка: Номер задачи должен быть числом.");
+			return new UpdateCommand { TodoList = _currentTodoList };
+		}
 
-        Console.WriteLine("Ошибка: Используйте: update <номер> новый текст");
-        return new UpdateCommand { TodoList = _currentTodoList };
-    }
+		if (updateIndex < 1 || updateIndex > _currentTodoList.Count)
+		{
+			Console.WriteLine("Ошибка: Задачи с таким номером не существует.");
+			return new UpdateCommand { TodoList = _currentTodoList };
+		}
+
+		if (string.IsNullOrEmpty(textPart))
+		{
+			Console.WriteLine("Ошибка: Текст задачи не может быть пустым.");
+			return new UpdateCommand { TodoList = _currentTodoList };
+		}
+
+		return new UpdateCommand
+		{
+			TodoList = _currentTodoList,
+			TaskIndex = updateIndex,
+			NewText = textPart
+		};
+	}
 
     private static ICommand ParseReadCommand(string argument)
 {
-        if (int.TryParse(argument, out int taskIndex))
-        {
-            return new ReadCommand { TodoList = _currentTodoList, TaskIndex = taskIndex };
-        }
-        return new ReadCommand { TodoList = _currentTodoList };
-    }
+		if (string.IsNullOrEmpty(argument))
+		{
+			Console.WriteLine("Ошибка: Используйте: read <номер>");
+			return new ReadCommand { TodoList = _currentTodoList };
+		}
+
+		if (!int.TryParse(argument, out int taskIndex))
+		{
+			Console.WriteLine("Ошибка: Номер задачи должен быть числом.");
+			return new ReadCommand { TodoList = _currentTodoList };
+		}
+
+		if (taskIndex < 1 || taskIndex > _currentTodoList.Count)
+		{
+			Console.WriteLine("Ошибка: Задачи с таким номером не существует.");
+			return new ReadCommand { TodoList = _currentTodoList };
+		}
+
+		return new ReadCommand { TodoList = _currentTodoList, TaskIndex = taskIndex };
+	}
 
 	private static ICommand ParseUndoCommand(string args)
 	{
