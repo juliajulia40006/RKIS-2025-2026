@@ -186,7 +186,6 @@ public static class CommandParser
 	{
         if (string.IsNullOrEmpty(argument))
         {
-            Console.WriteLine("Ошибка: Используйте: update <номер> новый текст");
             return new UpdateCommand { TodoList = _currentTodoList };
         }
 

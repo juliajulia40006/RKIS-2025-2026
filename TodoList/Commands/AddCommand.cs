@@ -1,5 +1,5 @@
 ﻿namespace TodoList.Commands;
-public class AddCommand : ICommand
+public class AddCommand : ICommand, IUndo
 {
     public bool Multiline { get; set; } = false;
     public string TaskText { get; set; } = "";

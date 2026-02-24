@@ -55,18 +55,10 @@ class Program
 
 			if (command != null)
 			{
-				if (command is UndoCommand || command is RedoCommand)
+				command.Execute();
+
+				if (command is IUndo )
 				{
-					command.Execute();
-				}
-				else if (command is HelpCommand || command is ViewCommand ||
-						 command is ReadCommand || command is ProfileCommand)
-				{
-					command.Execute();
-				}
-				else
-				{
-					command.Execute();
 					AppInfo.undoStack.Push(command);
 					AppInfo.redoStack.Clear();
 				}

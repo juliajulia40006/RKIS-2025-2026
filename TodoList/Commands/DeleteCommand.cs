@@ -1,5 +1,5 @@
 ﻿namespace TodoList.Commands;
-public class DeleteCommand : ICommand
+public class DeleteCommand : ICommand, IUndo
 {
 	public int TaskIndex { get; set; }
 	public TodoList TodoList { get; set; }

@@ -8,9 +8,12 @@ public class RedoCommand : ICommand
 		if (AppInfo.redoStack.Count > 0)
 		{
 			ICommand command = AppInfo.redoStack.Pop();
-			command.Execute();
-			AppInfo.undoStack.Push(command);
-			Console.WriteLine("Команда повторена.");
+			if(command is IUndo undoableCommand)
+			{
+				command.Execute();
+				AppInfo.undoStack.Push(command);
+				Console.WriteLine("Команда повторена.");
+			}
 		}
 		else
 		{

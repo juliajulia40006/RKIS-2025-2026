@@ -1,15 +1,23 @@
 ﻿
 namespace TodoList.Commands;
-public class UndoCommand:ICommand
+public class UndoCommand: ICommand
 {
 	public void Execute()
 	{
 		if (AppInfo.undoStack.Count > 0)
 		{
 			ICommand command = AppInfo.undoStack.Pop();
-			command.Unexecute();
-			AppInfo.redoStack.Push(command);
-			Console.WriteLine("Команда отменена.");
+			if (command is IUndo undoableCommand)
+			{
+				undoableCommand.Unexecute();
+				AppInfo.redoStack.Push(command);
+				Console.WriteLine("Команда отменена.");
+			}
+			else
+			{
+				AppInfo.undoStack.Push(command);
+				Console.WriteLine("Эта команда не поддерживает отмену.");
+			}
 		}
 		else
 		{

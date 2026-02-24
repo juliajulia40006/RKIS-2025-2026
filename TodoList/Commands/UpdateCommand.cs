@@ -1,5 +1,5 @@
 ﻿namespace TodoList.Commands;
-public class UpdateCommand : ICommand
+public class UpdateCommand : ICommand, IUndo
 {
     public int TaskIndex { get; set; }
     public string NewText { get; set; } = "";
