@@ -1,5 +1,6 @@
-﻿using TodoList.Commands;
-using TodoList;
+﻿using TodoList;
+using TodoList.Commands;
+using TodoList.Exceptions;
 
 class Program
 {
@@ -8,61 +9,100 @@ class Program
 
 	static void Main(string[] args)
 	{
-		Console.WriteLine("The program was made by Deinega and Piyagova");
-
-		string dataDirectory = "data";
-		FileManager.EnsureDataDirectory(dataDirectory);
-		string profilesFilePath = Path.Combine(dataDirectory, "profiles.csv");
-		FileManager.LoadProfiles(profilesFilePath);
-		Console.WriteLine("Войти в существующий профиль? [y/n]");
-		string answer = Console.ReadLine()?.Trim().ToLower();
-
-		if (answer == "y")
+		try
 		{
-			if (!LoginUser())
-				return;
-		}
-		else if (answer == "n")
-		{
-			if (!RegisterUser())
-				return;
-		}
-		else
-		{
-			Console.WriteLine("Неверный выбор.");
-			return;
-		}
+			Console.WriteLine("The program was made by Deinega and Piyagova");
 
-		InitializeTodoList();
-		CommandParser.Initialize(currentTodoList, AppInfo.CurrentProfile);
+			string dataDirectory = "data";
+			FileManager.EnsureDataDirectory(dataDirectory);
+			string profilesFilePath = Path.Combine(dataDirectory, "profiles.csv");
+			FileManager.LoadProfiles(profilesFilePath);
 
-		while (true)
-		{
-			Console.Write("\nВведите команду (help - список команд): ");
-			string input = Console.ReadLine()?.Trim() ?? "";
+			Console.WriteLine("Войти в существующий профиль? [y/n]");
+			string answer = Console.ReadLine()?.Trim().ToLower();
 
-			if (string.IsNullOrEmpty(input))
-				continue;
-
-			ICommand command = CommandParser.Parse(input);
-
-			if (command is ExitCommand)
+			if (answer == "y")
 			{
-				SaveAllData();
-				command.Execute();
-				break;
+				if (!LoginUser())
+					return;
+			}
+			else if (answer == "n")
+			{
+				if (!RegisterUser())
+					return;
+			}
+			else
+			{
+				Console.WriteLine("Неверный выбор.");
+				return;
 			}
 
-			if (command != null)
-			{
-				command.Execute();
+			InitializeTodoList();
+			CommandParser.Initialize(currentTodoList, AppInfo.CurrentProfile);
 
-				if (command is IUndo )
+			while (true)
+			{
+				try
 				{
-					AppInfo.undoStack.Push(command);
-					AppInfo.redoStack.Clear();
+					Console.Write("\nВведите команду (help - список команд): ");
+					string input = Console.ReadLine()?.Trim() ?? "";
+
+					if (string.IsNullOrEmpty(input))
+						continue;
+
+					ICommand command = CommandParser.Parse(input);
+
+					if (command is ExitCommand)
+					{
+						SaveAllData();
+						command.Execute();
+						break;
+					}
+
+					if (command != null)
+					{
+						command.Execute();
+
+						if (command is IUndo)
+						{
+							AppInfo.undoStack.Push(command);
+							AppInfo.redoStack.Clear();
+						}
+					}
+				}
+				catch (TaskNotFoundException ex)
+				{
+					Console.WriteLine($"Ошибка задачи: {ex.Message}");
+				}
+				catch (AuthenticationException ex)
+				{
+					Console.WriteLine($"Ошибка авторизации: {ex.Message}");
+				}
+				catch (InvalidCommandException ex)
+				{
+					Console.WriteLine($"Ошибка команды: {ex.Message}");
+				}
+				catch (InvalidArgumentException ex)
+				{
+					Console.WriteLine($"Ошибка аргументов: {ex.Message}");
+				}
+				catch (DuplicateLoginException ex)
+				{
+					Console.WriteLine($"Ошибка регистрации: {ex.Message}");
+				}
+				catch (InvalidOperationException ex)
+				{
+					Console.WriteLine($"Ошибка операции: {ex.Message}");
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine($"Неожиданная ошибка: {ex.Message}");
 				}
 			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Критическая ошибка: {ex.Message}");
 		}
 	}
 
