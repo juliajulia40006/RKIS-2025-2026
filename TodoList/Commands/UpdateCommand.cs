@@ -1,4 +1,5 @@
-﻿namespace TodoList.Commands;
+﻿using TodoList.Exceptions;
+namespace TodoList.Commands;
 public class UpdateCommand : ICommand, IUndo
 {
     public int TaskIndex { get; set; }
@@ -11,28 +12,23 @@ public class UpdateCommand : ICommand, IUndo
 
 	public void Execute()
     {
-		if (TodoList != null && TaskIndex >= 1 && TaskIndex <= TodoList	.Count)
-		{
-            int index = TaskIndex - 1;
-			updatedItem = TodoList[index];
-			oldText = updatedItem.Text;
-			itemIndex = index;
+		if (TodoList == null)
+			throw new InvalidOperationException("Список задач не инициализирован.");
 
-			if (string.IsNullOrEmpty(NewText))
-            {
-                Console.WriteLine("Ошибка: Новый текст задачи не может быть пустым");
-                return;
-            }
+		if (TaskIndex < 1 || TaskIndex > TodoList.Count)
+			throw new TaskNotFoundException(TaskIndex);
 
-			TodoList.Update(index, NewText);
-			Console.WriteLine($"Задача обновлена: '{oldText}' -> '{NewText}'");
-		}
+		if (string.IsNullOrEmpty(NewText))
+			throw new InvalidArgumentException("Новый текст задачи не может быть пустым.");
 
-		else
-        {
-            Console.WriteLine("Ошибка: Используйте: update \"номер\" новый текст");
-        }
-    }
+		int index = TaskIndex - 1;
+		updatedItem = TodoList[index];
+		oldText = updatedItem.Text;
+		itemIndex = index;
+
+		TodoList.Update(index, NewText);
+		Console.WriteLine($"Задача обновлена: '{oldText}' -> '{NewText}'");
+	}
 
 	public void Unexecute()
 	{
