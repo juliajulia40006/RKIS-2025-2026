@@ -239,4 +239,19 @@ public static class FileManager
 
         return count;
     }
+
+	public static void SyncTodoListWithAppInfo(TodoList todoList)
+	{
+		if (AppInfo.CurrentProfileId.HasValue)
+		{
+			var userId = AppInfo.CurrentProfileId.Value;
+			var updatedTodos = new List<TodoItem>();
+			foreach (var item in todoList)
+			{
+				updatedTodos.Add(item);
+			}
+			AppInfo.UserTodos[userId] = updatedTodos;
+			AppInfo.SaveUserTodos(userId);
+		}
+	}
 }

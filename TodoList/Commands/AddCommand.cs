@@ -76,7 +76,8 @@ public class AddCommand : ICommand
 
 			if (index >= 0)
 			{
-				TodoList.Delete(index + 1);
+				TodoList.Delete(index);
+				FileManager.SyncTodoListWithAppInfo(TodoList);
 			}
 		}
 	}

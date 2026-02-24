@@ -44,8 +44,6 @@ class Program
 			if (string.IsNullOrEmpty(input))
 				continue;
 
-			var currentTodos = AppInfo.GetCurrentTodos();
-			var currentProfile = AppInfo.CurrentProfile;
 			ICommand command = CommandParser.Parse(input);
 
 			if (command is ExitCommand)

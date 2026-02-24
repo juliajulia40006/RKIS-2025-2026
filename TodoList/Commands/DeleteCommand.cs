@@ -13,7 +13,7 @@ public class DeleteCommand : ICommand
 			deletedIndex = TaskIndex - 1;
 			deletedItem = TodoList[deletedIndex];
 			string deletedTask = deletedItem.Text;
-			TodoList.Delete(TaskIndex);
+			TodoList.Delete(deletedIndex);
 			Console.WriteLine($"Задача '{deletedTask}' удалена.");
 		}
 		else
@@ -29,7 +29,7 @@ public class DeleteCommand : ICommand
 			var tempItems = TodoList.ToList();
 			tempItems.Insert(deletedIndex, deletedItem);
 
-			for (int i = TodoList.Count; i >= 1; i--)
+			for (int i = TodoList.Count; i >= 0; i--)
 			{
 				TodoList.Delete(i);
 			}
@@ -38,6 +38,7 @@ public class DeleteCommand : ICommand
 			{
 				TodoList.Add(item);
 			}
+			FileManager.SyncTodoListWithAppInfo(TodoList);
 
 			Console.WriteLine($"Задача '{deletedItem.Text}' восстановлена.");
 		}

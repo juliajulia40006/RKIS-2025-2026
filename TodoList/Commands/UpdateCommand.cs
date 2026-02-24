@@ -24,7 +24,7 @@ public class UpdateCommand : ICommand
                 return;
             }
 
-			TodoList.Update(TaskIndex, NewText);
+			TodoList.Update(index, NewText);
 			Console.WriteLine($"Задача обновлена: '{oldText}' -> '{NewText}'");
 		}
 
@@ -38,7 +38,8 @@ public class UpdateCommand : ICommand
 	{
 		if (updatedItem != null && oldText != null && TodoList != null)
 		{
-			TodoList.Update(itemIndex + 1, oldText);
+			TodoList.Update(itemIndex, oldText);
+			FileManager.SyncTodoListWithAppInfo(TodoList);
 		}
 	}
 }
