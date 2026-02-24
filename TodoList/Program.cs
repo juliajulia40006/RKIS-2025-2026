@@ -181,6 +181,12 @@ class Program
 		Console.Write("Логин: ");
 		string login = Console.ReadLine()?.Trim();
 
+		if (string.IsNullOrEmpty(login))
+		{
+			Console.WriteLine("Ошибка: Логин не может быть пустым.");
+			return false;
+		}
+
 		if (AppInfo.Profiles.Any(p => p.Login.Equals(login, StringComparison.OrdinalIgnoreCase)))
 		{
 			Console.WriteLine("Этот логин уже занят.");
@@ -190,14 +196,32 @@ class Program
 		Console.Write("Пароль: ");
 		string password = Console.ReadLine()?.Trim();
 
+		if (string.IsNullOrEmpty(password))
+		{
+			Console.WriteLine("Ошибка: Пароль не может быть пустым.");
+			return false;
+		}
+
 		Console.Write("Имя: ");
 		string firstName = Console.ReadLine()?.Trim();
+
+		if (string.IsNullOrEmpty(firstName))
+		{
+			Console.WriteLine("Ошибка: Имя не может быть пустым.");
+			return false;
+		}
 
 		Console.Write("Фамилия: ");
 		string lastName = Console.ReadLine()?.Trim();
 
+		if (string.IsNullOrEmpty(lastName))
+		{
+			Console.WriteLine("Ошибка: Фамилия не может быть пустой.");
+			return false;
+		}
+
 		Console.Write("Год рождения: ");
-		if (!int.TryParse(Console.ReadLine(), out int birthYear))
+		if (!int.TryParse(Console.ReadLine(), out int birthYear) || birthYear < 1900 || birthYear > DateTime.Today.Year)
 		{
 			Console.WriteLine("Неверный год рождения.");
 			return false;
