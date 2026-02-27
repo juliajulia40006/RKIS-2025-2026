@@ -69,7 +69,7 @@ Exception, try-catch-finally, Иерархия исключений, throw, Со
 
 ### Темы:
 
-—
+Потоки данных, Декораторы потоков, Буфферизация, IDisposable, using, FileStream, MemoryStream, BufferedStream, StreamReader / StreamWriter, BinaryReader / BinaryWriter
 
 ### Дедлайн
 
