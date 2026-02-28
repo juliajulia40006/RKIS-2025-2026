@@ -6,6 +6,7 @@ class Program
 {
 	private static TodoList.TodoList currentTodoList;
 	public static TodoList.TodoList CurrentTodoList => currentTodoList;
+	private static FileManager _fileManager;
 
 	static void Main(string[] args)
 	{
@@ -14,9 +15,22 @@ class Program
 			Console.WriteLine("The program was made by Deinega and Piyagova");
 
 			string dataDirectory = "data";
-			FileManager.EnsureDataDirectory(dataDirectory);
-			string profilesFilePath = Path.Combine(dataDirectory, "profiles.csv");
-			FileManager.LoadProfiles(profilesFilePath);
+			if (!Directory.Exists(dataDirectory))
+			{
+				Directory.CreateDirectory(dataDirectory);
+			}
+
+			_fileManager = new FileManager(dataDirectory);
+
+			try
+			{
+				AppInfo.Profiles = _fileManager.LoadProfiles().ToList();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Ошибка загрузки профилей: {ex.Message}");
+				AppInfo.Profiles = new List<Profile>();
+			}
 
 			Console.WriteLine("Войти в существующий профиль? [y/n]");
 			string answer = Console.ReadLine()?.Trim().ToLower();
@@ -116,11 +130,6 @@ class Program
 			currentTodoList.Add(todo);
 		}
 
-		currentTodoList.OnTodoAdded += FileManager.SaveTodoList;
-		currentTodoList.OnTodoDeleted += FileManager.SaveTodoList;
-		currentTodoList.OnTodoUpdated += FileManager.SaveTodoList;
-		currentTodoList.OnStatusChanged += FileManager.SaveTodoList;
-
 		var currentTodos = AppInfo.GetCurrentTodos();
 	}
 
@@ -158,7 +167,17 @@ class Program
 
 			if (!AppInfo.UserTodos.ContainsKey(profile.Id))
 			{
-				AppInfo.UserTodos[profile.Id] = AppInfo.LoadUserTodos(profile.Id);
+				try
+				{
+					AppInfo.UserTodos[profile.Id] = _fileManager.LoadTodos(profile.Id).ToList();
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine($"Ошибка загрузки задач: {ex.Message}");
+					AppInfo.UserTodos[profile.Id] = new List<TodoItem>();
+
+				}
+
 			}
 
 			Console.WriteLine($"Добро пожаловать, {profile.GetInfo()}!");
@@ -235,7 +254,14 @@ class Program
 		AppInfo.CurrentProfile = profile;
 		AppInfo.UserTodos[id] = new List<TodoItem>();
 		string profilesFilePath = Path.Combine("data", "profiles.csv");
-		FileManager.SaveProfiles(profilesFilePath);
+		try
+		{
+			_fileManager.SaveProfiles(AppInfo.Profiles);
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Ошибка сохранения профиля: {ex.Message}");
+		}
 
 		Console.WriteLine($"Профиль создан! Добро пожаловать, {profile.GetInfo()}!");
 
@@ -246,11 +272,17 @@ class Program
 
 	private static void SaveAllData()
 	{
-		string profilesFilePath = Path.Combine("data", "profiles.csv");
-		FileManager.SaveProfiles(profilesFilePath);
-		foreach (var kvp in AppInfo.UserTodos)
+		try
 		{
-			AppInfo.SaveUserTodos(kvp.Key);
+			_fileManager.SaveProfiles(AppInfo.Profiles);
+			foreach (var kvp in AppInfo.UserTodos)
+			{
+				_fileManager.SaveTodos(kvp.Key, kvp.Value);
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Ошибка сохранения данных: {ex.Message}");
 		}
 	}
 
