@@ -27,6 +27,7 @@ public static class CommandParser
 		_commandHandlers["redo"] = ParseRedoCommand;
 		_commandHandlers["exit"] = ParseExitCommand;
 		_commandHandlers["search"] = ParseSearchCommand;
+		_commandHandlers["load"] = ParseLoadCommand;
 	}
 
 	public static ICommand Parse(string inputString)
@@ -376,5 +377,33 @@ public static class CommandParser
 		}
 
 		return command;
+	}
+
+	private static ICommand ParseLoadCommand(string argument)
+	{
+		if (string.IsNullOrEmpty(argument))
+			throw new InvalidCommandException("Используйте: load <количество_скачиваний> <размер_скачиваний>");
+
+		string[] parts = argument.Split(' ');
+		if (parts.Length != 2)
+			throw new InvalidCommandException("Используйте: load <количество_скачиваний> <размер_скачиваний>");
+
+		if (!int.TryParse(parts[0], out int downloadsCount))
+			throw new InvalidArgumentException("Количество скачиваний должно быть числом.");
+
+		if (!int.TryParse(parts[1], out int downloadSize))
+			throw new InvalidArgumentException("Размер скачиваний должен быть числом.");
+
+		if (downloadsCount <= 0)
+			throw new InvalidArgumentException("Количество скачиваний должно быть больше 0.");
+
+		if (downloadSize <= 0)
+			throw new InvalidArgumentException("Размер скачиваний должен быть больше 0.");
+
+		return new LoadCommand
+		{
+			DownloadsCount = downloadsCount,
+			DownloadSize = downloadSize
+		};
 	}
 }
