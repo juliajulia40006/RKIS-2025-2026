@@ -1,257 +1,264 @@
 ﻿namespace TodoList;
 
-public static class FileManager
+using System.Security.Cryptography;
+using System.Text;
+
+public class FileManager : IDataStorage
 {
-    public static void EnsureDataDirectory(string dirPath)
-    {
-        if (!Directory.Exists(dirPath))
-        {
-            Directory.CreateDirectory(dirPath);
-        }
-    }
-	public static void SaveProfiles(string filePath)
+	private readonly string _dataDirectory;
+
+	public FileManager(string dataDirectory)
 	{
-		var lines = new List<string> { "Id;Login;Password;FirstName;LastName;BirthYear" };
-
-		foreach (var profile in AppInfo.Profiles)
-		{
-			string line = $"{profile.Id};{profile.Login};{profile.Password};{profile.FirstName};{profile.LastName};{profile.BirthYear}";
-			lines.Add(line);
-		}
-
-		File.WriteAllLines(filePath, lines);
+		_dataDirectory = dataDirectory;
+		EnsureDataDirectory();
 	}
 
-	public static void LoadProfiles(string filePath)
+	private void EnsureDataDirectory()
 	{
-		if (!File.Exists(filePath)) return;
-
-		string[] lines = File.ReadAllLines(filePath);
-
-		for (int i = 1; i < lines.Length; i++)
+		if (!Directory.Exists(_dataDirectory))
 		{
-			if (string.IsNullOrWhiteSpace(lines[i])) continue;
+			Directory.CreateDirectory(_dataDirectory);
+		}
+	}
 
-			string[] parts = lines[i].Split(';');
-			if (parts.Length < 6) continue;
+	private string GetProfilesFilePath()
+	{
+		return Path.Combine(_dataDirectory, "profiles.dat");
+	}
 
-			try
+	private string GetTodosFilePath(Guid userId)
+	{
+		return Path.Combine(_dataDirectory, $"todos_{userId}.dat");
+	}
+
+	public void SaveProfiles(IEnumerable<Profile> profiles)
+	{
+		string filePath = GetProfilesFilePath();
+
+		using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+		using (var bufferedStream = new BufferedStream(fileStream, 8192))
+		using (var aes = CryptoHelper.CreateAes())
+		using (var cryptoStream = new CryptoStream(bufferedStream, aes.CreateEncryptor(), CryptoStreamMode.Write))
+		using (var writer = new StreamWriter(cryptoStream, Encoding.UTF8))
+		{
+			writer.WriteLine("Id;Login;Password;FirstName;LastName;BirthYear");
+
+			foreach (var profile in profiles)
 			{
-				Guid id = Guid.Parse(parts[0]);
-				string login = parts[1];
-				string password = parts[2];
-				string firstName = parts[3];
-				string lastName = parts[4];
-				int birthYear = int.Parse(parts[5]);
-
-				AppInfo.Profiles.Add(new Profile(id, login, password, firstName, lastName, birthYear));
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine($"Ошибка при загрузке профиля: {ex.Message}");
+				string line = $"{profile.Id};{profile.Login};{profile.Password};{profile.FirstName};{profile.LastName};{profile.BirthYear}";
+				writer.WriteLine(line);
 			}
 		}
 	}
-	public static void SaveTodoList(TodoItem item)
+
+	public IEnumerable<Profile> LoadProfiles()
 	{
-		if (AppInfo.CurrentProfileId.HasValue)
+		string filePath = GetProfilesFilePath();
+
+		if (!File.Exists(filePath))
 		{
-			var userId = AppInfo.CurrentProfileId.Value;
-			var currentList = Program.CurrentTodoList;
-			if (currentList != null)
+			return new List<Profile>();
+		}
+
+		var profiles = new List<Profile>();
+
+		try
+		{
+			using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+			using (var bufferedStream = new BufferedStream(fileStream, 8192))
+			using (var aes = CryptoHelper.CreateAes())
+			using (var cryptoStream = new CryptoStream(bufferedStream, aes.CreateDecryptor(), CryptoStreamMode.Read))
+			using (var reader = new StreamReader(cryptoStream, Encoding.UTF8))
 			{
-				var todoItems = new List<TodoItem>();
-				foreach (var todo in currentList)
+				string? line;
+				bool isFirstLine = true;
+
+				while ((line = reader.ReadLine()) != null)
 				{
-					todoItems.Add(todo);
+					if (isFirstLine)
+					{
+						isFirstLine = false;
+						continue;
+					}
+
+					if (string.IsNullOrWhiteSpace(line))
+						continue;
+
+					string[] parts = line.Split(';');
+					if (parts.Length < 6)
+						continue;
+
+					Guid id = Guid.Parse(parts[0]);
+					string login = parts[1];
+					string password = parts[2];
+					string firstName = parts[3];
+					string lastName = parts[4];
+					int birthYear = int.Parse(parts[5]);
+
+					profiles.Add(new Profile(id, login, password, firstName, lastName, birthYear));
 				}
-				AppInfo.UserTodos[userId] = todoItems;
-				AppInfo.SaveUserTodos(userId);
-				Console.WriteLine("задача сохранена");
+			}
+		}
+		catch (CryptographicException ex)
+		{
+			throw new InvalidOperationException("Ошибка расшифровки данных профилей. Файл поврежден.", ex);
+		}
+		catch (IOException ex)
+		{
+			throw new InvalidOperationException($"Ошибка доступа к файлу профилей: {ex.Message}", ex);
+		}
+		catch (FormatException ex)
+		{
+			throw new InvalidOperationException($"Ошибка формата данных: {ex.Message}", ex);
+		}
+
+		return profiles;
+	}
+
+	public void SaveTodos(Guid userId, IEnumerable<TodoItem> todos)
+	{
+		string filePath = GetTodosFilePath(userId);
+
+		using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+		using (var bufferedStream = new BufferedStream(fileStream, 8192))
+		using (var aes = CryptoHelper.CreateAes())
+		using (var cryptoStream = new CryptoStream(bufferedStream, aes.CreateEncryptor(), CryptoStreamMode.Write))
+		using (var writer = new StreamWriter(cryptoStream, Encoding.UTF8))
+		{
+			writer.WriteLine("Index;Text;Status;LastUpdate");
+
+			int index = 0;
+			foreach (var item in todos)
+			{
+				string escapedText = item.Text.Replace("\"", "\"\"").Replace("\n", "\\n");
+				writer.WriteLine($"{index};\"{escapedText}\";{item.Status};{item.LastUpdate:yyyy-MM-ddTHH:mm:ss}");
+				index++;
 			}
 		}
 	}
 
-	public static void SaveTodos(TodoList todos, string filePath)
-    {
-        string[] lines = new string[todos.Count + 1];
-        lines[0] = "Index;Text;Status;LastUpdate";
-
-        for (int i = 0; i < todos.Count; i++)
-        {
-            TodoItem item = todos[i];
-            lines[i + 1] = $"{i};\"{item.Text.Replace("\"", "\"\"").Replace("\n", "\\n")}\";{item.Status};{item.LastUpdate:yyyy-MM-ddTHH:mm:ss}";
-        }
-
-        File.WriteAllLines(filePath, lines);
-    }
-
-    public static TodoList LoadTodos(string filePath)
-    {
-        TodoList todoList = new TodoList();
-        if (!File.Exists(filePath)) return todoList;
-
-        string[] lines = File.ReadAllLines(filePath);
-
-        for (int i = 1; i < lines.Length; i++)
-        {
-            if (string.IsNullOrWhiteSpace(lines[i])) continue;
-
-            string[] parts = ParseCsvLine(lines[i]);
-            if (parts.Length < 4) continue;
-
-            string text = parts[1].Replace("\"\"", "\"").Replace("\\n", "\n").Trim('"');
-            TodoStatus status;	
-            try
-            {
-                status = Enum.Parse<TodoStatus>(parts[2]);
-            }
-            catch (ArgumentException)
-            {
-                status = TodoStatus.NotStarted;
-            }
-
-
-            DateTime lastUpdate;
-            if (!DateTime.TryParse(parts[3], out lastUpdate))
-            {
-                lastUpdate = DateTime.Now;
-            }
-
-            TodoItem item = new TodoItem(text);
-            item.SetStatus(status);
-            item.SetLastUpdate(lastUpdate);
-
-            todoList.Add(item);
-        }
-
-        return todoList;
-    }
-
-	public static void SaveUserTodos(Guid userId, List<TodoItem> todos, string filePath)
+	public IEnumerable<TodoItem> LoadTodos(Guid userId)
 	{
-		var lines = new List<string> { "Index;Text;Status;LastUpdate" };
+		string filePath = GetTodosFilePath(userId);
 
-		for (int i = 0; i < todos.Count; i++)
+		if (!File.Exists(filePath))
 		{
-			TodoItem item = todos[i];
-			lines.Add($"{i};\"{item.Text.Replace("\"", "\"\"").Replace("\n", "\\n")}\";{item.Status};{item.LastUpdate:yyyy-MM-ddTHH:mm:ss}");
+			return new List<TodoItem>();
 		}
 
-		File.WriteAllLines(filePath, lines);
+		var todos = new List<TodoItem>();
+
+		try
+		{
+			using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+			using (var bufferedStream = new BufferedStream(fileStream, 8192))
+			using (var aes = CryptoHelper.CreateAes())
+			using (var cryptoStream = new CryptoStream(bufferedStream, aes.CreateDecryptor(), CryptoStreamMode.Read))
+			using (var reader = new StreamReader(cryptoStream, Encoding.UTF8))
+			{
+				string? line;
+				bool isFirstLine = true;
+
+				while ((line = reader.ReadLine()) != null)
+				{
+					if (isFirstLine)
+					{
+						isFirstLine = false;
+						continue;
+					}
+
+					if (string.IsNullOrWhiteSpace(line))
+						continue;
+
+					string[] parts = ParseCsvLine(line);
+					if (parts.Length < 4)
+						continue;
+
+					string text = parts[1].Replace("\"\"", "\"").Replace("\\n", "\n").Trim('"');
+
+					TodoStatus status = Enum.Parse<TodoStatus>(parts[2]);
+
+					DateTime lastUpdate = DateTime.Parse(parts[3]);
+
+					var item = new TodoItem(text);
+					item.SetStatus(status);
+					item.SetLastUpdate(lastUpdate);
+
+					todos.Add(item);
+				}
+			}
+		}
+		catch (CryptographicException ex)
+		{
+			throw new InvalidOperationException($"Ошибка расшифровки данных задач пользователя {userId}. Файл поврежден.", ex);
+		}
+		catch (IOException ex)
+		{
+			throw new InvalidOperationException($"Ошибка доступа к файлу задач пользователя {userId}: {ex.Message}", ex);
+		}
+		catch (FormatException ex)
+		{
+			throw new InvalidOperationException($"Ошибка формата данных: {ex.Message}", ex);
+		}
+
+		return todos;
 	}
 
-	public static List<TodoItem> LoadUserTodos(string filePath)
+	private string[] ParseCsvLine(string line)
 	{
-		List<TodoItem> todoList = new List<TodoItem>();
-		if (!File.Exists(filePath)) return todoList;
+		int fieldCount = CountFields(line);
+		string[] result = new string[fieldCount];
+		int fieldIndex = 0;
+		bool inQuotes = false;
+		string currentField = "";
 
-		string[] lines = File.ReadAllLines(filePath);
-
-		for (int i = 1; i < lines.Length; i++)
+		for (int i = 0; i < line.Length; i++)
 		{
-			if (string.IsNullOrWhiteSpace(lines[i])) continue;
+			char c = line[i];
 
-			string[] parts = ParseCsvLine(lines[i]);
-			if (parts.Length < 4) continue;
-
-			string text = parts[1].Replace("\"\"", "\"").Replace("\\n", "\n").Trim('"');
-			TodoStatus status;
-			try
+			if (c == '"')
 			{
-				status = Enum.Parse<TodoStatus>(parts[2]);
+				inQuotes = !inQuotes;
 			}
-			catch (ArgumentException)
+			else if (c == ';' && !inQuotes)
 			{
-				status = TodoStatus.NotStarted;
+				result[fieldIndex] = currentField;
+				currentField = "";
+				fieldIndex++;
 			}
-
-			DateTime lastUpdate;
-			if (!DateTime.TryParse(parts[3], out lastUpdate))
+			else
 			{
-				lastUpdate = DateTime.Now;
+				currentField += c;
 			}
-
-			TodoItem item = new TodoItem(text);
-			item.SetStatus(status);
-			item.SetLastUpdate(lastUpdate);
-
-			todoList.Add(item);
 		}
 
-		return todoList;
+		if (fieldIndex < result.Length)
+		{
+			result[fieldIndex] = currentField;
+		}
+
+		return result;
 	}
 
-	private static string[] ParseCsvLine(string line)
-    {
-        int fieldCount = CountFields(line);
-        string[] result = new string[fieldCount];
-        int fieldIndex = 0;
-        bool inQuotes = false;
-        string currentField = "";
-
-        for (int i = 0; i < line.Length; i++)
-        {
-            char c = line[i];
-
-            if (c == '"')
-            {
-                inQuotes = !inQuotes;
-            }
-            else if (c == ';' && !inQuotes)
-            {
-                result[fieldIndex] = currentField;
-                currentField = "";
-                fieldIndex++;
-            }
-            else
-            {
-                currentField += c;
-            }
-        }
-
-        if (fieldIndex < result.Length)
-        {
-            result[fieldIndex] = currentField;
-        }
-
-        return result;
-    }
-
-    private static int CountFields(string line)
-    {
-        int count = 1;
-        bool inQuotes = false;
-
-        for (int i = 0; i < line.Length; i++)
-        {
-            char c = line[i];
-
-            if (c == '"')
-            {
-                inQuotes = !inQuotes;
-            }
-            else if (c == ';' && !inQuotes)
-            {
-                count++;
-            }
-        }
-
-        return count;
-    }
-
-	public static void SyncTodoListWithAppInfo(TodoList todoList)
+	private int CountFields(string line)
 	{
-		if (AppInfo.CurrentProfileId.HasValue)
+		int count = 1;
+		bool inQuotes = false;
+
+		for (int i = 0; i < line.Length; i++)
 		{
-			var userId = AppInfo.CurrentProfileId.Value;
-			var updatedTodos = new List<TodoItem>();
-			foreach (var item in todoList)
+			char c = line[i];
+
+			if (c == '"')
 			{
-				updatedTodos.Add(item);
+				inQuotes = !inQuotes;
 			}
-			AppInfo.UserTodos[userId] = updatedTodos;
-			AppInfo.SaveUserTodos(userId);
+			else if (c == ';' && !inQuotes)
+			{
+				count++;
+			}
 		}
+
+		return count;
 	}
 }
