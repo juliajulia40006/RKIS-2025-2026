@@ -116,4 +116,11 @@ lesson 13: edits
 + Добавлен интерфейс IUndo для обработки команд, которые можно отменить
 + Изменён блок обработки команд в стек в program.cs
 
+lesson 14:
++added exceptions 
++updated classes and methods 
+
+lesson 15: 
++ added load command
++ added loadbar
 /*
