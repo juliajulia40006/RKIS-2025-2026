@@ -19,22 +19,4 @@ class AppInfo
 		return new List<TodoItem>();
 	}
 
-	public static void SaveUserTodos(Guid userId)
-	{
-		if (UserTodos.ContainsKey(userId))
-		{
-			string filePath = Path.Combine("data", $"todos_{userId}.csv");
-			FileManager.SaveUserTodos(userId, UserTodos[userId], filePath);
-		}
-	}
-	public static List<TodoItem> LoadUserTodos(Guid userId)
-	{
-		string filePath = Path.Combine("data", $"todos_{userId}.csv");
-		if (File.Exists(filePath))
-		{
-			return FileManager.LoadUserTodos(filePath);
-		}
-		return new List<TodoItem>();
-	}
-
 }

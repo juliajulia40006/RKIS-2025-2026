@@ -77,7 +77,7 @@ public class AddCommand : ICommand, IUndo
 			if (index >= 0)
 			{
 				TodoList.Delete(index);
-				FileManager.SyncTodoListWithAppInfo(TodoList);
+				TodoSynchronizer.SyncWithAppInfo(TodoList);
 			}
 		}
 	}

@@ -38,8 +38,7 @@ public class DeleteCommand : ICommand, IUndo
 			{
 				TodoList.Add(item);
 			}
-			FileManager.SyncTodoListWithAppInfo(TodoList);
-
+			TodoSynchronizer.SyncWithAppInfo(TodoList);
 			Console.WriteLine($"Задача '{deletedItem.Text}' восстановлена.");
 		}
 	}

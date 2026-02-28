@@ -1,13 +1,13 @@
 ﻿using TodoList;
 using TodoList.Commands;
 using TodoList.Exceptions;
+using MainTodoList = TodoList.TodoList;
 
 class Program
 {
 	private static TodoList.TodoList currentTodoList;
 	public static TodoList.TodoList CurrentTodoList => currentTodoList;
 	private static FileManager _fileManager;
-
 	static void Main(string[] args)
 	{
 		try
@@ -21,6 +21,7 @@ class Program
 			}
 
 			_fileManager = new FileManager(dataDirectory);
+			TodoSynchronizer.Initialize(_fileManager);
 
 			try
 			{

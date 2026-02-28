@@ -35,7 +35,7 @@ public class UpdateCommand : ICommand, IUndo
 		if (updatedItem != null && oldText != null && TodoList != null)
 		{
 			TodoList.Update(itemIndex, oldText);
-			FileManager.SyncTodoListWithAppInfo(TodoList);
+			TodoSynchronizer.SyncWithAppInfo(TodoList);
 		}
 	}
 }
