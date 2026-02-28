@@ -6,6 +6,7 @@ public class LoadCommand : ICommand
 	public int DownloadSize { get; set; }
 
 	private static readonly object _consoleLock = new object();
+	private int _startRow;
 
 	public void Execute()
 	{
@@ -14,6 +15,12 @@ public class LoadCommand : ICommand
 
 	private async Task RunAsync()
 	{
+		_startRow = Console.CursorTop;
+		for (int i = 0; i < DownloadsCount; i++)
+		{
+			Console.WriteLine();
+		}
+
 		var tasks = new List<Task>();
 
 		for (int i = 0; i < DownloadsCount; i++)
@@ -24,6 +31,7 @@ public class LoadCommand : ICommand
 
 		await Task.WhenAll(tasks);
 
+		Console.SetCursorPosition(0, _startRow + DownloadsCount);
 		Console.WriteLine("\nВсе загрузки завершены.");
 	}
 
@@ -38,8 +46,12 @@ public class LoadCommand : ICommand
 
 			lock (_consoleLock)
 			{
-				Console.SetCursorPosition(0, Console.CursorTop - DownloadsCount + index);
-				Console.Write(bar);
+				int targetRow = _startRow + index;
+				if (targetRow >= 0 && targetRow < Console.BufferHeight)
+				{
+					Console.SetCursorPosition(0, targetRow);
+					Console.Write(bar.PadRight(Console.WindowWidth - 1));
+				}
 			}
 
 			await Task.Delay(random.Next(50, 200));
