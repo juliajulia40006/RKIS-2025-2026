@@ -6,7 +6,25 @@ public class LogoutCommand : ICommand
 	{
 		if (AppInfo.CurrentProfileId.HasValue)
 		{
-			AppInfo.SaveUserTodos(AppInfo.CurrentProfileId.Value);
+			try
+			{
+				var userId = AppInfo.CurrentProfileId.Value;
+
+				string dataDirectory = "data";
+				var fileManager = new FileManager(dataDirectory);
+
+				if (AppInfo.UserTodos.ContainsKey(userId))
+				{
+					var userTodos = AppInfo.UserTodos[userId];
+					fileManager.SaveTodos(userId, userTodos);
+					Console.WriteLine("Задачи сохранены.");
+				}
+				fileManager.SaveProfiles(AppInfo.Profiles);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Ошибка при сохранении данных: {ex.Message}");
+			}
 		}
 
 		AppInfo.CurrentProfileId = null;

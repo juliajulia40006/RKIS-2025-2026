@@ -1,7 +1,6 @@
 ﻿using TodoList;
 using TodoList.Commands;
 using TodoList.Exceptions;
-using MainTodoList = TodoList.TodoList;
 
 class Program
 {
