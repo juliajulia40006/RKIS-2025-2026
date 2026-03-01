@@ -44,6 +44,7 @@ public class AddCommand : ICommand, IUndo
 			{
 				int index = TodoList.Count - 1;
 			}
+			TodoSynchronizer.SyncWithAppInfo(TodoList);
 			Console.WriteLine("Добавлена многострочная задача");
 		}
         else
@@ -56,6 +57,7 @@ public class AddCommand : ICommand, IUndo
 
 			_addedItem = new TodoItem(TaskText);
 			TodoList.Add(_addedItem);
+			TodoSynchronizer.SyncWithAppInfo(TodoList);
 			Console.WriteLine($"Добавлено: {TaskText}.");
         }	
     }

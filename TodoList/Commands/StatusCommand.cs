@@ -26,6 +26,7 @@ public class StatusCommand : ICommand
 		previousStatus = item.Status;
 		itemIndex = index;
 		item.SetStatus(Status);
+		TodoSynchronizer.SyncWithAppInfo(TodoList);
 		string statusText = TodoItem.GetStatusText(Status);
 		Console.WriteLine($"Задача '{statusItem.Text}' отмечена как '{statusText}'!");
 	}
@@ -36,6 +37,7 @@ public class StatusCommand : ICommand
 		{
 			var item = TodoList[itemIndex];
 			item.SetStatus(previousStatus);
+			TodoSynchronizer.SyncWithAppInfo(TodoList);
 		}
 	}
 

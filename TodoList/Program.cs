@@ -253,15 +253,6 @@ class Program
 		AppInfo.CurrentProfileId = id;
 		AppInfo.CurrentProfile = profile;
 		AppInfo.UserTodos[id] = new List<TodoItem>();
-		string profilesFilePath = Path.Combine("data", "profiles.csv");
-		try
-		{
-			_fileManager.SaveProfiles(AppInfo.Profiles);
-		}
-		catch (Exception ex)
-		{
-			Console.WriteLine($"Ошибка сохранения профиля: {ex.Message}");
-		}
 
 		Console.WriteLine($"Профиль создан! Добро пожаловать, {profile.GetInfo()}!");
 

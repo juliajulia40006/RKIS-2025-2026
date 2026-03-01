@@ -23,12 +23,12 @@ public class FileManager : IDataStorage
 
 	private string GetProfilesFilePath()
 	{
-		return Path.Combine(_dataDirectory, "profiles.dat");
+		return Path.Combine(_dataDirectory, "profiles.csv");
 	}
 
 	private string GetTodosFilePath(Guid userId)
 	{
-		return Path.Combine(_dataDirectory, $"todos_{userId}.dat");
+		return Path.Combine(_dataDirectory, $"todos_{userId}.csv");
 	}
 
 	public void SaveProfiles(IEnumerable<Profile> profiles)

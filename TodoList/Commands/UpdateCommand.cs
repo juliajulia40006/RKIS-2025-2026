@@ -27,6 +27,7 @@ public class UpdateCommand : ICommand, IUndo
 		itemIndex = index;
 
 		TodoList.Update(index, NewText);
+		TodoSynchronizer.SyncWithAppInfo(TodoList);
 		Console.WriteLine($"Задача обновлена: '{oldText}' -> '{NewText}'");
 	}
 
