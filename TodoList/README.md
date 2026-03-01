@@ -123,4 +123,10 @@ lesson 14:
 lesson 15: 
 + added load command
 + added loadbar
+
+lesson 16: 
++добавлен класс CryptoHelper.cs 
++добавлено шифрование данных 
++Filemanager отделён от AppInfo
++добавлен интерфейс IDataStorage
 /*
