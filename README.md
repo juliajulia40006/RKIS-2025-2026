@@ -57,7 +57,7 @@ Exception, try-catch-finally, Иерархия исключений, throw, Со
 
 ### Темы:
 
-—
+Процессы, Домены, Потоки, Thread, ThreadPool, Parallel, Task, async / await, I/O-bound и CPU-bound, lock, Mutex, Semaphore, Concurrent-коллекции, CancellationToken, Таймаут
 
 ### Дедлайн
 
@@ -65,11 +65,11 @@ Exception, try-catch-finally, Иерархия исключений, throw, Со
 
 ---
 
-## Занятие 4. Stream примеры на работе с файлами
+## Занятие 4. Stream
 
 ### Темы:
 
-—
+Потоки данных, Декораторы потоков, Буфферизация, IDisposable, using, FileStream, MemoryStream, BufferedStream, StreamReader / StreamWriter, BinaryReader / BinaryWriter
 
 ### Дедлайн
 
@@ -239,7 +239,7 @@ Exception, try-catch-finally, Иерархия исключений, throw, Со
 
 ### Темы:
 
-—
+Unit-тесты, xUnit, Создание тестового проекта, Обозреватель тестов, AAA, `Fact`, `Theory`
 
 ### Дедлайн
 
