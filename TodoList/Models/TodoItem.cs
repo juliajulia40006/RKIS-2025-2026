@@ -1,4 +1,8 @@
-﻿namespace TodoList;
+﻿namespace TodoList.Models;
+
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 public enum TodoStatus
 {
 	NotStarted,
@@ -9,18 +13,27 @@ public enum TodoStatus
 }
 public class TodoItem
 {
-
+	[Key]
+	public int Id { get; set; }
+	[Required]
     public string Text { get; private set; }
+	[Required]
     public TodoStatus Status { get; private set; }
+	[Required]	
     public DateTime LastUpdate { get; private set; }
+	public Guid ProfileId { get; set; }
+	public Profile Profile { get; set; } = null!;
 
-    public TodoItem(string text)
+	public TodoItem(string text)
     {
         Text = text;
         Status = TodoStatus.NotStarted;
         LastUpdate = DateTime.Now;
     }
-    public void SetStatus(TodoStatus status)
+
+	protected TodoItem() { }
+
+	public void SetStatus(TodoStatus status)
     {
         Status = status;
         LastUpdate = DateTime.Now;
