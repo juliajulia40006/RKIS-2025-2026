@@ -131,4 +131,11 @@ lesson 16:
 +добавлен интерфейс IDataStorage
 edits:
 +CryptoHelper, IDataStorage, Filemanager перемещены в Services 
+
+lesson 17:
++добавлен TodoList.Server.csproj
++добавлен сервер, использующий httplistener, слушающий адрес http://localhost:5000/
++реализован API-клиент
++добавлен класс ApiDaraStorage:IDataStorage
++добавлена команда sync и парс для неё в CommandParser.cs
 /*
