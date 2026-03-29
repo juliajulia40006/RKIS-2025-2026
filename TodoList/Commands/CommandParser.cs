@@ -28,6 +28,7 @@ public static class CommandParser
 		_commandHandlers["exit"] = ParseExitCommand;
 		_commandHandlers["search"] = ParseSearchCommand;
 		_commandHandlers["load"] = ParseLoadCommand;
+		_commandHandlers["sync"] = ParseSyncCommand;
 	}
 
 	public static ICommand Parse(string inputString)
@@ -405,5 +406,25 @@ public static class CommandParser
 			DownloadsCount = downloadsCount,
 			DownloadSize = downloadSize
 		};
+	}
+
+	private static ICommand ParseSyncCommand(string argument)
+	{
+		var command = new SyncCommand();
+
+		if (!string.IsNullOrEmpty(argument))
+		{
+			string cleanArgument = argument.Trim().ToLower();
+			if (cleanArgument == "--pull")
+			{
+				command.Pull = true;
+			}
+			else if (cleanArgument == "--push")
+			{
+				command.Push = true;
+			}
+		}
+
+		return command;
 	}
 }
