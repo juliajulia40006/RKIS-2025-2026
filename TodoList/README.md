@@ -129,4 +129,6 @@ lesson 16:
 +добавлено шифрование данных 
 +Filemanager отделён от AppInfo
 +добавлен интерфейс IDataStorage
+edits:
++CryptoHelper, IDataStorage, Filemanager перемещены в Services 
 /*
