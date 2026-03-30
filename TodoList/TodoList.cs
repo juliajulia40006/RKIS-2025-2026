@@ -1,5 +1,6 @@
 ﻿using System.Collections;
-using static TodoList.TodoItem;
+using static TodoList.Models.TodoItem;
+using TodoList.Models;
 
 namespace TodoList;
 public class TodoList : IEnumerable<TodoItem>

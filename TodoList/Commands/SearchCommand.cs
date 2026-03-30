@@ -1,4 +1,5 @@
-﻿namespace TodoList.Commands;
+﻿using TodoList.Models;
+namespace TodoList.Commands;
 
 public class SearchCommand : ICommand
 {

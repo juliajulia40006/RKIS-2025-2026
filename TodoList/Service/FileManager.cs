@@ -1,7 +1,8 @@
-﻿namespace TodoList;
-
+﻿using TodoList.Models;
 using System.Security.Cryptography;
 using System.Text;
+
+namespace TodoList;
 
 public class FileManager : IDataStorage
 {

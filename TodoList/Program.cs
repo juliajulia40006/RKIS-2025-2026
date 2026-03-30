@@ -1,4 +1,5 @@
 ﻿using TodoList;
+using TodoList.Models;
 using TodoList.Commands;
 using TodoList.Exceptions;
 
@@ -262,7 +263,7 @@ class Program
 	}
 
 	private static void SaveAllData()
-	{
+	{	
 		try
 		{
 			_fileManager.SaveProfiles(AppInfo.Profiles);

@@ -1,4 +1,5 @@
-﻿namespace TodoList;
+﻿using TodoList.Models;
+namespace TodoList;
 
 public static class TodoSynchronizer
 {

@@ -1,7 +1,6 @@
 ﻿namespace TodoList.Models;
 
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 public enum TodoStatus
 {

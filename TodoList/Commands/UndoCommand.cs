@@ -1,4 +1,7 @@
-﻿namespace TodoList.Commands;
+﻿using TodoList.Models;
+
+namespace TodoList.Commands;
+
 public class UndoCommand: ICommand
 {
 	public void Execute()

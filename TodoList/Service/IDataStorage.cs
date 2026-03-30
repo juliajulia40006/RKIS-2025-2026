@@ -1,4 +1,6 @@
-﻿namespace TodoList;
+﻿using TodoList.Models;
+
+namespace TodoList;
 
 public interface IDataStorage
 {
