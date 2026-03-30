@@ -138,4 +138,12 @@ lesson 17:
 +реализован API-клиент
 +добавлен класс ApiDaraStorage:IDataStorage
 +добавлена команда sync и парс для неё в CommandParser.cs
+
+lesson 19: 
++добавлены директории Data\ , Models\ , Services\ , Migrations\
++добавлены классы TodoRepository , ProfileRepository
++ Profile и Todoitem перемещены в директорию Models
++ добавлены using TodoList.Models; в большинстве файлов
++ реализована база данных 
+(практическая работа ещё выполняется)
 /*
