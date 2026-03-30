@@ -1,13 +1,16 @@
 ﻿using TodoList;
-using TodoList.Models;
 using TodoList.Commands;
 using TodoList.Exceptions;
+using TodoList.Models;
+using TodoList.Services;
 
 class Program
 {
 	private static TodoList.TodoList currentTodoList;
 	public static TodoList.TodoList CurrentTodoList => currentTodoList;
-	private static FileManager _fileManager;
+	private static ProfileRepository _profileRepository;
+	private static TodoRepository _todoRepository;
+
 	static void Main(string[] args)
 	{
 		try
@@ -20,12 +23,9 @@ class Program
 				Directory.CreateDirectory(dataDirectory);
 			}
 
-			_fileManager = new FileManager(dataDirectory);
-			TodoSynchronizer.Initialize(_fileManager);
-
 			try
 			{
-				AppInfo.Profiles = _fileManager.LoadProfiles().ToList();
+				AppInfo.Profiles = _profileRepository.GetAll();
 			}
 			catch (Exception ex)
 			{
@@ -170,7 +170,8 @@ class Program
 			{
 				try
 				{
-					AppInfo.UserTodos[profile.Id] = _fileManager.LoadTodos(profile.Id).ToList();
+					var todos = _todoRepository.GetAll(profile.Id);
+					AppInfo.UserTodos[profile.Id] = todos;
 				}
 				catch (Exception ex)
 				{
@@ -263,14 +264,43 @@ class Program
 	}
 
 	private static void SaveAllData()
-	{	
+	{
 		try
 		{
-			_fileManager.SaveProfiles(AppInfo.Profiles);
+			foreach (var profile in AppInfo.Profiles)
+			{
+				var existingProfile = _profileRepository.GetById(profile.Id);
+				if (existingProfile == null)
+				{
+					_profileRepository.Add(profile);
+				}
+				else
+				{
+					_profileRepository.Update(profile);
+				}
+			}
+
 			foreach (var kvp in AppInfo.UserTodos)
 			{
-				_fileManager.SaveTodos(kvp.Key, kvp.Value);
+				var profileId = kvp.Key;
+				var todos = kvp.Value;
+
+				var existingTodos = _todoRepository.GetAll(profileId);
+
+				foreach (var todo in todos)
+				{
+					if (todo.Id == 0 || !existingTodos.Any(t => t.Id == todo.Id))
+					{
+						_todoRepository.Add(todo, profileId);
+					}
+					else
+					{
+						_todoRepository.Update(todo);
+					}
+				}
 			}
+
+			Console.WriteLine("Данные сохранены в базу данных.");
 		}
 		catch (Exception ex)
 		{
