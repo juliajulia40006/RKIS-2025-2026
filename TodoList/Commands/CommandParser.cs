@@ -161,7 +161,7 @@ public static class CommandParser
 				return new StatusCommand
 				{
 					TodoList = _currentTodoList,
-					TaskIndex = taskId,
+					TaskId = taskId,
 					Status = status
 				};
 			}
@@ -250,13 +250,13 @@ public static class CommandParser
 			return new ReadCommand { TodoList = _currentTodoList };
 		}
 
-		if (!int.TryParse(argument, out int taskIndex))
+		if (!int.TryParse(argument, out int taskId))
 		{
 			Console.WriteLine("Ошибка: Номер задачи должен быть числом.");
 			return new ReadCommand { TodoList = _currentTodoList };
 		}
 
-		if (taskIndex < 1 || taskIndex > _currentTodoList.Count)
+		if (taskId < 1 || taskId > _currentTodoList.Count)
 		{
 			Console.WriteLine("Ошибка: Задачи с таким номером не существует.");
 			return new ReadCommand { TodoList = _currentTodoList };

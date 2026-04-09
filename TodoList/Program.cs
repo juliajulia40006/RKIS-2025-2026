@@ -23,6 +23,9 @@ class Program
 				Directory.CreateDirectory(dataDirectory);
 			}
 
+			_profileRepository = new ProfileRepository();
+			_todoRepository = new TodoRepository();
+
 			try
 			{
 				AppInfo.Profiles = _profileRepository.GetAll();
