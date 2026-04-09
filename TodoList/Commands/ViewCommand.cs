@@ -1,5 +1,4 @@
-﻿using TodoList.Models;
-namespace TodoList.Commands;
+﻿namespace TodoList.Commands;
 public class ViewCommand : ICommand
 {
     public bool ShowIndex { get; set; } = false;

@@ -1,6 +1,4 @@
-﻿using TodoList.Models;
-
-namespace TodoList.Commands;
+﻿namespace TodoList.Commands;
 
 public class SyncCommand : ICommand
 {
