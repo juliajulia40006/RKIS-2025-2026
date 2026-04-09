@@ -69,7 +69,7 @@ public class TodoList : IEnumerable<TodoItem>
         int dateWidth = 19;
 
         string header = "";
-        if (showIndex) header += "Индекс".PadRight(indexWidth) + " ";
+        if (showIndex) header += "ID".PadRight(indexWidth) + " ";
         header += "Задачи".PadRight(taskWidth) + " ";
         if (showStatus) header += "Статус".PadRight(statusWidth) + " ";
         if (showDate) header += "Дата изменения".PadRight(dateWidth);
@@ -84,7 +84,7 @@ public class TodoList : IEnumerable<TodoItem>
 
             if (showIndex)
             {
-                line += (i + 1).ToString().PadRight(indexWidth) + " ";
+                line += item.Id.ToString().PadRight(indexWidth) + " ";
             }
 
             string taskText = GetFirstLine(item.Text);
