@@ -5,7 +5,7 @@ namespace TodoList.Commands;
 
 public class StatusCommand : ICommand
 {
-    public int TaskIndex { get; set; }
+    public int TaskId { get; set; }
     public TodoStatus Status { get; set; }
 	public TodoList TodoList { get; set; }
 
@@ -17,10 +17,10 @@ public class StatusCommand : ICommand
 		if (TodoList == null)
 			throw new InvalidOperationException("Список задач не инициализирован.");
 
-		if (TaskIndex < 1 || TaskIndex > TodoList.Count)
-			throw new TaskNotFoundException(TaskIndex);
+		if (TaskId < 1 || TaskId > TodoList.Count)
+			throw new TaskNotFoundException(TaskId);
 
-		int index = TaskIndex - 1;
+		int index = TaskId - 1;
 		var item = TodoList[index];
 
 		statusItem = item;

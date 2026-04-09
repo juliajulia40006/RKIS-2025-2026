@@ -3,7 +3,7 @@ using TodoList.Models;
 namespace TodoList.Commands;
 public class UpdateCommand : ICommand, IUndo
 {
-    public int TaskIndex { get; set; }
+    public int TaskId { get; set; }
     public string NewText { get; set; } = "";
 	public TodoList TodoList { get; set; }
 
@@ -16,13 +16,13 @@ public class UpdateCommand : ICommand, IUndo
 		if (TodoList == null)
 			throw new InvalidOperationException("Список задач не инициализирован.");
 
-		if (TaskIndex < 1 || TaskIndex > TodoList.Count)
-			throw new TaskNotFoundException(TaskIndex);
+		if (TaskId < 1 || TaskId > TodoList.Count)
+			throw new TaskNotFoundException(TaskId);
 
 		if (string.IsNullOrEmpty(NewText))
 			throw new InvalidArgumentException("Новый текст задачи не может быть пустым.");
 
-		int index = TaskIndex - 1;
+		int index = TaskId - 1;
 		updatedItem = TodoList[index];
 		oldText = updatedItem.Text;
 		itemIndex = index;

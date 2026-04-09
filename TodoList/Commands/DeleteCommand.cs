@@ -3,7 +3,7 @@ using TodoList.Models;
 namespace TodoList.Commands;
 public class DeleteCommand : ICommand, IUndo
 {
-	public int TaskIndex { get; set; }
+	public int TaskId { get; set; }
 	public TodoList TodoList { get; set; }
 	private TodoItem deletedItem;
 	private int deletedIndex;
@@ -13,11 +13,11 @@ public class DeleteCommand : ICommand, IUndo
 		if (TodoList == null)
 			throw new InvalidOperationException("Список задач не инициализирован.");
 
-		if (TaskIndex < 1 || TaskIndex > TodoList.Count)
-			throw new TaskNotFoundException(TaskIndex);
+		if (TaskId < 1 || TaskId > TodoList.Count)
+			throw new TaskNotFoundException(TaskId);
 
-		deletedItem = TodoList.FirstOrDefault(t => t.Id == TaskIndex);
-		if (deletedItem == null) throw new TaskNotFoundException(TaskIndex);
+		deletedItem = TodoList.FirstOrDefault(t => t.Id == TaskId);
+		if (deletedItem == null) throw new TaskNotFoundException(TaskId);
 
 		string deletedTask = deletedItem.Text;
 		TodoList.Delete(deletedIndex);
