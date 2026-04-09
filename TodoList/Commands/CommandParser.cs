@@ -1,4 +1,5 @@
-﻿using TodoList.Exceptions;
+﻿using System.Threading.Tasks;
+using TodoList.Exceptions;
 using TodoList.Models;
 namespace TodoList.Commands;
 
@@ -151,7 +152,7 @@ public static class CommandParser
 			return null;
 		}
 
-		if (int.TryParse(parts[0], out int taskIndex))
+		if (int.TryParse(parts[0], out int taskId))
 		{
 			string statusStr = parts[1];
 			try
@@ -160,7 +161,7 @@ public static class CommandParser
 				return new StatusCommand
 				{
 					TodoList = _currentTodoList,
-					TaskIndex = taskIndex,
+					TaskIndex = taskId,
 					Status = status
 				};
 			}
@@ -182,19 +183,19 @@ public static class CommandParser
 			return new DeleteCommand { TodoList = _currentTodoList };
 		}
 
-		if (!int.TryParse(argument, out int taskIndex))
+		if (!int.TryParse(argument, out int taskId))
 		{
 			Console.WriteLine("Ошибка: Номер задачи должен быть числом.");
 			return new DeleteCommand { TodoList = _currentTodoList };
 		}
 
-		if (taskIndex < 1 || taskIndex > _currentTodoList.Count)
+		if (taskId < 1 || taskId > _currentTodoList.Count)
 		{
 			Console.WriteLine("Ошибка: Задачи с таким номером не существует.");
 			return new DeleteCommand { TodoList = _currentTodoList };
 		}
 
-		return new DeleteCommand { TodoList = _currentTodoList, TaskIndex = taskIndex };
+		return new DeleteCommand { TodoList = _currentTodoList, TaskId = taskId };
 	}
 
 	private static ICommand ParseUpdateCommand (string argument)
@@ -212,16 +213,16 @@ public static class CommandParser
 			return new UpdateCommand { TodoList = _currentTodoList };
 		}
 
-		string indexPart = argument.Substring(0, firstSpaceIndex).Trim();
+		string idPart = argument.Substring(0, firstSpaceIndex).Trim();
 		string textPart = argument.Substring(firstSpaceIndex + 1).Trim();
 
-		if (!int.TryParse(indexPart, out int updateIndex))
+		if (!int.TryParse(idPart, out int taskId))
 		{
 			Console.WriteLine("Ошибка: Номер задачи должен быть числом.");
 			return new UpdateCommand { TodoList = _currentTodoList };
 		}
 
-		if (updateIndex < 1 || updateIndex > _currentTodoList.Count)
+		if (taskId < 1 || taskId > _currentTodoList.Count)
 		{
 			Console.WriteLine("Ошибка: Задачи с таким номером не существует.");
 			return new UpdateCommand { TodoList = _currentTodoList };
@@ -236,7 +237,7 @@ public static class CommandParser
 		return new UpdateCommand
 		{
 			TodoList = _currentTodoList,
-			TaskIndex = updateIndex,
+			TaskId = taskId,
 			NewText = textPart
 		};
 	}
@@ -261,7 +262,7 @@ public static class CommandParser
 			return new ReadCommand { TodoList = _currentTodoList };
 		}
 
-		return new ReadCommand { TodoList = _currentTodoList, TaskIndex = taskIndex };
+		return new ReadCommand { TodoList = _currentTodoList, TaskId = taskId };
 	}
 
 	private static ICommand ParseUndoCommand(string args)
