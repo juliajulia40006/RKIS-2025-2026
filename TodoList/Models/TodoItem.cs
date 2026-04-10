@@ -21,16 +21,26 @@ public class TodoItem
 	[Required]	
     public DateTime LastUpdate { get; private set; }
 	public Guid ProfileId { get; set; }
-	public Profile Profile { get; set; } = null!;
+	public Profile? Profile { get; set; } = null!;
 
+	protected TodoItem()
+	{
+		Text = string.Empty;
+		Status = TodoStatus.NotStarted;
+		LastUpdate = DateTime.Now;
+	}
 	public TodoItem(string text)
     {
         Text = text;
         Status = TodoStatus.NotStarted;
         LastUpdate = DateTime.Now;
     }
-
-	protected TodoItem() { }
+	public TodoItem(string text, DateTime? lastUpdate = null)
+	{
+		Text = text;
+		Status = TodoStatus.NotStarted;
+		LastUpdate = lastUpdate ?? DateTime.Now;
+	}
 
 	public void SetStatus(TodoStatus status)
     {
@@ -86,11 +96,5 @@ public class TodoItem
     public void SetLastUpdate(DateTime dateTime)
     {
         LastUpdate = dateTime;
-    }
-    public TodoItem(string text, DateTime? lastUpdate = null)
-    {
-        Text = text;
-        Status = TodoStatus.NotStarted;
-        LastUpdate = lastUpdate ?? DateTime.Now;
     }
 }

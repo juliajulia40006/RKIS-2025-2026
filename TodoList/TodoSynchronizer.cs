@@ -18,6 +18,8 @@ public static class TodoSynchronizer
 			var updatedTodos = new List<TodoItem>();
 			foreach (var item in todoList)
 			{
+				if (item.ProfileId == Guid.Empty)
+					item.ProfileId = userId;
 				updatedTodos.Add(item);
 			}
 
@@ -33,4 +35,24 @@ public static class TodoSynchronizer
 			}
 		}
 	}
+
+	public static async Task SyncWithApiAsync(bool pull = false, bool push = false)
+	{
+		var apiStorage = new ApiDataStorage();
+
+		if (pull)
+		{
+			var profiles = apiStorage.LoadProfiles().ToList();
+		}
+		else if (push)
+		{
+			apiStorage.SaveProfiles(AppInfo.Profiles);
+			foreach (var kvp in AppInfo.UserTodos)
+			{
+				apiStorage.SaveTodos(kvp.Key, kvp.Value);
+			}
+		}
+	}
+
+
 }

@@ -40,6 +40,10 @@ public class AddCommand : ICommand, IUndo
             }
 
 			_addedItem = new TodoItem(multilineTask);
+			if (AppInfo.CurrentProfileId.HasValue)
+			{
+				_addedItem.ProfileId = AppInfo.CurrentProfileId.Value;
+			}
 			TodoList.Add(_addedItem);
 			if (TodoList != null)
 			{
@@ -57,6 +61,10 @@ public class AddCommand : ICommand, IUndo
             }
 
 			_addedItem = new TodoItem(TaskText);
+			if (AppInfo.CurrentProfileId.HasValue)
+			{
+				_addedItem.ProfileId = AppInfo.CurrentProfileId.Value;
+			}
 			TodoList.Add(_addedItem);
 			TodoSynchronizer.SyncWithAppInfo(TodoList);
 			Console.WriteLine($"Добавлено: {TaskText}.");

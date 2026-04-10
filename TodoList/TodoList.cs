@@ -84,8 +84,8 @@ public class TodoList : IEnumerable<TodoItem>
 
             if (showIndex)
             {
-                line += item.Id.ToString().PadRight(indexWidth) + " ";
-            }
+				line += (i + 1).ToString().PadRight(indexWidth) + " ";
+			}
 
             string taskText = GetFirstLine(item.Text);
             string shortTask = taskText.Length > 30 ? taskText.Substring(0, 27) + "..." : taskText;

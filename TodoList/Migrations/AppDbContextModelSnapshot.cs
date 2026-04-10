@@ -28,25 +28,24 @@ namespace TodoList.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Login")
                         .IsRequired()
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Login")
+                        .IsUnique();
 
                     b.ToTable("Profiles");
                 });
@@ -63,6 +62,9 @@ namespace TodoList.Migrations
                     b.Property<Guid>("ProfileId")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("ProfileId1")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
@@ -74,14 +76,22 @@ namespace TodoList.Migrations
 
                     b.HasIndex("ProfileId");
 
+                    b.HasIndex("ProfileId1");
+
                     b.ToTable("Todos");
                 });
 
             modelBuilder.Entity("TodoList.Models.TodoItem", b =>
                 {
+                    b.HasOne("TodoList.Models.Profile", null)
+                        .WithMany()
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("TodoList.Models.Profile", "Profile")
                         .WithMany("Todos")
-                        .HasForeignKey("ProfileId")
+                        .HasForeignKey("ProfileId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

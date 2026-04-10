@@ -1,5 +1,6 @@
 ﻿using TodoList;
 using TodoList.Commands;
+using TodoList.Data;
 using TodoList.Exceptions;
 using TodoList.Models;
 using TodoList.Services;
@@ -10,17 +11,40 @@ class Program
 	public static TodoList.TodoList CurrentTodoList => currentTodoList;
 	private static ProfileRepository _profileRepository;
 	private static TodoRepository _todoRepository;
-
-	static void Main(string[] args)
+static void Main(string[] args)
 	{
 		try
 		{
 			Console.WriteLine("The program was made by Deinega and Piyagova");
 
+			using (var db = new AppDbContext())
+			{
+				db.Database.EnsureCreated();
+			}
+
+			_profileRepository = new ProfileRepository();
+			_todoRepository = new TodoRepository();
+
+			try
+			{
+				AppInfo.Profiles = _profileRepository.GetAll();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Ошибка загрузки профилей: {ex.Message}");
+				AppInfo.Profiles = new List<Profile>();
+			}
+
 			string dataDirectory = "data";
+			var fileManager = new FileManager(dataDirectory);
+			TodoSynchronizer.Initialize(fileManager);
 			if (!Directory.Exists(dataDirectory))
 			{
 				Directory.CreateDirectory(dataDirectory);
+			}
+			using (var db = new AppDbContext())
+			{
+				db.Database.EnsureCreated();
 			}
 
 			_profileRepository = new ProfileRepository();
@@ -128,13 +152,19 @@ class Program
 	{
 		if (!AppInfo.CurrentProfileId.HasValue) return;
 		var userTodos = AppInfo.GetCurrentTodos();
+		foreach (var todo in userTodos)
+		{
+			if (todo.ProfileId == Guid.Empty)
+			{
+				todo.ProfileId = AppInfo.CurrentProfileId.Value;
+			}
+		}
+
 		currentTodoList = new TodoList.TodoList();
 		foreach (var todo in userTodos)
 		{
 			currentTodoList.Add(todo);
 		}
-
-		var currentTodos = AppInfo.GetCurrentTodos();
 	}
 
 	private static bool LoginUser()
@@ -159,30 +189,35 @@ class Program
 
 		try
 		{
-			var profile = AppInfo.Profiles.FirstOrDefault(p =>
-				p.Login.Equals(login, StringComparison.OrdinalIgnoreCase) &&
-				p.Password == password);
+			using var context = new AppDbContext();
+
+			string loginLower = login.ToLower();
+			var profile = context.Profiles
+				.FirstOrDefault(p => p.Login.ToLower() == loginLower && p.Password == password);
 
 			if (profile == null)
 				throw new ProfileNotFoundException(login);
 
+			if (!AppInfo.Profiles.Any(p => p.Id == profile.Id))
+			{
+				AppInfo.Profiles.Add(profile);
+			}
+
 			AppInfo.CurrentProfileId = profile.Id;
 			AppInfo.CurrentProfile = profile;
 
-			if (!AppInfo.UserTodos.ContainsKey(profile.Id))
+			try
 			{
-				try
-				{
-					var todos = _todoRepository.GetAll(profile.Id);
-					AppInfo.UserTodos[profile.Id] = todos;
-				}
-				catch (Exception ex)
-				{
-					Console.WriteLine($"Ошибка загрузки задач: {ex.Message}");
-					AppInfo.UserTodos[profile.Id] = new List<TodoItem>();
+				var todos = context.Todos
+					.Where(t => t.ProfileId == profile.Id)
+					.ToList();
+				AppInfo.UserTodos[profile.Id] = todos;
+			}
 
-				}
-
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Ошибка загрузки задач: {ex.Message}");
+				AppInfo.UserTodos[profile.Id] = new List<TodoItem>();
 			}
 
 			Console.WriteLine($"Добро пожаловать, {profile.GetInfo()}!");
@@ -199,7 +234,6 @@ class Program
 			return false;
 		}
 	}
-
 	private static bool RegisterUser()
 	{
 		Console.Write("Логин: ");
@@ -209,6 +243,19 @@ class Program
 		{
 			Console.WriteLine("Ошибка: Логин не может быть пустым.");
 			return false;
+		}
+
+		using (var checkContext = new AppDbContext())
+		{
+			string loginLower = login.ToLower();
+			var existingProfile = checkContext.Profiles
+				.FirstOrDefault(p => p.Login.ToLower() == loginLower);
+
+			if (existingProfile != null)
+			{
+				Console.WriteLine("Этот логин уже занят.");
+				return false;
+			}
 		}
 
 		if (AppInfo.Profiles.Any(p => p.Login.Equals(login, StringComparison.OrdinalIgnoreCase)))
@@ -254,6 +301,19 @@ class Program
 		Guid id = Guid.NewGuid();
 		var profile = new Profile(id, login, password, firstName, lastName, birthYear);
 
+		try
+		{
+			using var context = new AppDbContext();
+			context.Profiles.Add(profile);
+			context.SaveChanges();
+			Console.WriteLine($"Профиль сохранен в БД с ID: {id}");
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Ошибка сохранения профиля в БД: {ex.Message}");
+			return false;
+		}
+
 		AppInfo.Profiles.Add(profile);
 		AppInfo.CurrentProfileId = id;
 		AppInfo.CurrentProfile = profile;
@@ -266,48 +326,156 @@ class Program
 		return true;
 	}
 
-	private static void SaveAllData()
+private static void SaveAllData()
+{
+    try
+    {
+        foreach (var profile in AppInfo.Profiles)
+        {
+            try
+            {
+                using var context = new AppDbContext();
+                
+                var existingProfile = context.Profiles.Find(profile.Id);
+                
+                if (existingProfile == null)
+                {
+                    context.Profiles.Add(profile);
+                    context.SaveChanges();
+                    Console.WriteLine($"Профиль {profile.Login} (ID: {profile.Id}) добавлен в БД");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка сохранения профиля {profile.Login}: {ex.Message}");
+            }
+        }
+
+        foreach (var kvp in AppInfo.UserTodos)
+        {
+            var profileId = kvp.Key;
+            var todos = kvp.Value;
+
+            if (todos.Count == 0) continue;
+
+            Console.WriteLine($"Сохранение {todos.Count} задач для профиля ID: {profileId}");
+
+            try
+            {
+                using var context = new AppDbContext();
+                
+                var profile = context.Profiles.Find(profileId);
+                if (profile == null)
+                {
+                    Console.WriteLine($"ОШИБКА: Профиль с ID {profileId} не найден в БД!");
+                    continue;
+                }
+
+                var existingTodos = context.Todos
+                    .Where(t => t.ProfileId == profileId)
+                    .ToList();
+
+                foreach (var existingTodo in existingTodos)
+                {
+                    if (!todos.Any(t => t.Id == existingTodo.Id))
+                    {
+                        context.Todos.Remove(existingTodo);
+                    }
+                }
+                
+                context.SaveChanges();
+
+                foreach (var todo in todos)
+                {
+                    var todoForDb = new TodoItem(todo.Text)
+                    {
+                        ProfileId = profileId
+                    };
+                    todoForDb.SetStatus(todo.Status);
+                    todoForDb.SetLastUpdate(todo.LastUpdate);
+                    
+                    if (todo.Id > 0)
+                    {
+                        var existingTodo = context.Todos.Find(todo.Id);
+                        if (existingTodo != null)
+                        {
+                            existingTodo.UpdateText(todo.Text);
+                            existingTodo.SetStatus(todo.Status);
+                            existingTodo.SetLastUpdate(todo.LastUpdate);
+                        }
+                        else
+                        {
+                            context.Todos.Add(todoForDb);
+                        }
+                    }
+                    else
+                    {
+                        context.Todos.Add(todoForDb);
+                    }
+                }
+                
+                context.SaveChanges();
+                Console.WriteLine($"Задачи для профиля {profileId} успешно сохранены");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при сохранении задач: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Внутренняя ошибка: {ex.InnerException.Message}");
+
+                    foreach (var todo in todos)
+                    {
+                        try
+                        {
+                            using var singleContext = new AppDbContext();
+                            var todoForDb = new TodoItem(todo.Text)
+                            {
+                                ProfileId = profileId
+                            };
+                            todoForDb.SetStatus(todo.Status);
+                            todoForDb.SetLastUpdate(todo.LastUpdate);
+                            
+                            singleContext.Todos.Add(todoForDb);
+                            singleContext.SaveChanges();
+                            Console.WriteLine($"  Задача '{todo.Text}' сохранена успешно");
+                        }
+                        catch (Exception singleEx)
+                        {
+                            Console.WriteLine($"  Ошибка сохранения задачи '{todo.Text}': {singleEx.Message}");
+                            if (singleEx.InnerException != null)
+                            {
+                                Console.WriteLine($"  Внутренняя ошибка: {singleEx.InnerException.Message}");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Критическая ошибка: {ex.Message}");
+    }
+}
+	private static void ImportFromCsvToDb()
 	{
-		try
+		string dataDirectory = "data";
+		var fileManager = new FileManager(dataDirectory);
+
+		if (File.Exists(Path.Combine(dataDirectory, "profile.csv")))
 		{
-			foreach (var profile in AppInfo.Profiles)
+			var csvProfiles = fileManager.LoadProfiles().ToList();
+			foreach (var profile in csvProfiles)
 			{
-				var existingProfile = _profileRepository.GetById(profile.Id);
-				if (existingProfile == null)
+				var existing = _profileRepository.GetById(profile.Id);
+				if (existing == null)
 				{
 					_profileRepository.Add(profile);
-				}
-				else
-				{
-					_profileRepository.Update(profile);
+					Console.WriteLine($"Импортирован профиль: {profile.Login}");
 				}
 			}
-
-			foreach (var kvp in AppInfo.UserTodos)
-			{
-				var profileId = kvp.Key;
-				var todos = kvp.Value;
-
-				var existingTodos = _todoRepository.GetAll(profileId);
-
-				foreach (var todo in todos)
-				{
-					if (todo.Id == 0 || !existingTodos.Any(t => t.Id == todo.Id))
-					{
-						_todoRepository.Add(todo, profileId);
-					}
-					else
-					{
-						_todoRepository.Update(todo);
-					}
-				}
-			}
-
-			Console.WriteLine("Данные сохранены в базу данных.");
-		}
-		catch (Exception ex)
-		{
-			Console.WriteLine($"Ошибка сохранения данных: {ex.Message}");
+			AppInfo.Profiles = _profileRepository.GetAll().ToList();
 		}
 	}
 

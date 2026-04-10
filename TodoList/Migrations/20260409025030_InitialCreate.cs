@@ -16,10 +16,10 @@ namespace TodoList.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Login = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    Password = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    FirstName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    LastName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    Login = table.Column<string>(type: "TEXT", nullable: false),
+                    Password = table.Column<string>(type: "TEXT", nullable: false),
+                    FirstName = table.Column<string>(type: "TEXT", nullable: false),
+                    LastName = table.Column<string>(type: "TEXT", nullable: false),
                     BirthYear = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -36,7 +36,8 @@ namespace TodoList.Migrations
                     Text = table.Column<string>(type: "TEXT", nullable: false),
                     Status = table.Column<int>(type: "INTEGER", nullable: false),
                     LastUpdate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    ProfileId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    ProfileId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ProfileId1 = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -47,12 +48,29 @@ namespace TodoList.Migrations
                         principalTable: "Profiles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Todos_Profiles_ProfileId1",
+                        column: x => x.ProfileId1,
+                        principalTable: "Profiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Profiles_Login",
+                table: "Profiles",
+                column: "Login",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Todos_ProfileId",
                 table: "Todos",
                 column: "ProfileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Todos_ProfileId1",
+                table: "Todos",
+                column: "ProfileId1");
         }
 
         /// <inheritdoc />

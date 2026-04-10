@@ -16,11 +16,14 @@ public class DeleteCommand : ICommand, IUndo
 		if (TaskId < 1 || TaskId > TodoList.Count)
 			throw new TaskNotFoundException(TaskId);
 
-		deletedItem = TodoList.FirstOrDefault(t => t.Id == TaskId);
+		deletedIndex = TaskId - 1;
+		deletedItem = TodoList[deletedIndex];
 		if (deletedItem == null) throw new TaskNotFoundException(TaskId);
 
 		string deletedTask = deletedItem.Text;
 		TodoList.Delete(deletedIndex);
+		TodoSynchronizer.SyncWithAppInfo(TodoList);
+
 		Console.WriteLine($"Задача '{deletedTask}' удалена.");
 	}
 

@@ -17,6 +17,16 @@ public class TodoRepository
 	{
 		using var context = new AppDbContext();
 		item.ProfileId = profileId;
+		if (item.Id != 0)
+		{
+			var existingItem = context.Todos.Find(item.Id);
+			if (existingItem != null)
+			{
+				context.Entry(existingItem).CurrentValues.SetValues(item);
+				context.SaveChanges();
+				return;
+			}
+		}
 		context.Todos.Add(item);
 		context.SaveChanges();
 	}
@@ -24,7 +34,16 @@ public class TodoRepository
 	public void Update(TodoItem item)
 	{
 		using var context = new AppDbContext();
-		context.Todos.Update(item);
+		var existingItem = context.Todos.Find(item.Id);
+		if (existingItem != null)
+		{
+			context.Entry(existingItem).CurrentValues.SetValues(item);
+		}
+		else
+		{
+			context.Todos.Attach(item);
+			context.Entry(item).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+		}
 		context.SaveChanges();
 	}
 
