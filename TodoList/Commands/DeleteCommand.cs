@@ -31,18 +31,7 @@ public class DeleteCommand : ICommand, IUndo
 	{
 		if (deletedItem != null && TodoList != null)
 		{
-			var tempItems = TodoList.ToList();
-			tempItems.Insert(deletedIndex, deletedItem);
-
-			for (int i = TodoList.Count; i >= 0; i--)
-			{
-				TodoList.Delete(i);
-			}
-
-			foreach (var item in tempItems )
-			{
-				TodoList.Add(item);
-			}
+			TodoList.Add(deletedItem);
 			TodoSynchronizer.SyncWithAppInfo(TodoList);
 			Console.WriteLine($"Задача '{deletedItem.Text}' восстановлена.");
 		}
